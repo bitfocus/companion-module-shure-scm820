@@ -1,0 +1,24 @@
+{
+	"name": "shure-scm820",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [ "Mixer" ],
+	"manufacturer": "Shure",
+	"product": "SCM820",
+	"shortname": "shure-scm820",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+	"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-shure-scm820.git"
+	},
+	"author": "Keith Rocheck <keith.rocheck@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-shure-scm820/issues"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-shure-scm820#readme"
+}
