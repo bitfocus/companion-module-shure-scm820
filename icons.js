@@ -139,7 +139,7 @@ class instance_icons {
 	 * @param {String} halign - horizontal alignment
 	 * @param {String} valign - vertical alignment
 	 * @access protected
-	 * @since 1.1.0
+	 * @since 1.0.0
 	 */
 	drawFromPNGdata(img, icon, xStart, yStart, width, height, halign, valign) {
 		if (icon !== undefined) {

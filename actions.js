@@ -5,8 +5,10 @@ module.exports = {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getActions() {
-		var actions = {}
+	initActions() {
+		let actions = {}
+
+		this.setupChannelChoices()
 
 		actions['chan_name'] = {
 			label: 'Set channel name',
@@ -18,7 +20,7 @@ module.exports = {
 		}
 
 		actions['audio_mute'] = {
-			label: 'Mute or unmute channel',
+			label: 'Set channel mute',
 			options: [this.CHANNELS_FIELD(), this.MUTE_FIELD],
 			callback: ({ options }) => {
 				let cmd = `SET ${options.channel} AUDIO_MUTE ${options.choice}`
@@ -55,7 +57,7 @@ module.exports = {
 		}
 
 		actions['always_on_enable'] = {
-			label: 'Set channel always on in audiomix',
+			label: 'Set channel always on in mix',
 			options: [this.MIXER_FIELD, this.CHANNELS_FIELD('I'), this.ONOFFTOGGLE_FIELD],
 			callback: ({ options }) => {
 				let cmd = `SET ${options.channel} ALWAYS_ON_ENABLE_${options.mix} ${options.choice}`
@@ -73,7 +75,7 @@ module.exports = {
 		}
 
 		actions['dfr_assigned_chan'] = {
-			label: 'Set Assign DFR',
+			label: 'Set DFR assigned channel',
 			options: [this.DFR_FIELD, this.CHANNELS_FIELD('IMU')],
 			callback: ({ options }) => {
 				let cmd = `SET DFR${options.dfr}_ASSIGN_CHAN ${options.channel}`
@@ -81,7 +83,7 @@ module.exports = {
 			},
 		}
 		actions['dfr_bypass'] = {
-			label: 'Set DFR Bypass',
+			label: 'Set DFR bypass',
 			options: [this.DFR_FIELD, this.ONOFF_FIELD],
 			callback: ({ options }) => {
 				let cmd = `SET DFR${options.dfr}_BYPASS ${options.choice}`
@@ -89,7 +91,7 @@ module.exports = {
 			},
 		}
 		actions['dfr_clear'] = {
-			label: 'Clear DFR Filters',
+			label: 'Clear DFR filters',
 			options: [this.DFR_FIELD],
 			callback: ({ options }) => {
 				let cmd = `SET DFR${options.dfr}_CLEAR_ALL_FILTERS ON`
@@ -97,7 +99,7 @@ module.exports = {
 			},
 		}
 		actions['dfr_freeze'] = {
-			label: 'Set DFR Freeze',
+			label: 'Set DFR freeze',
 			options: [this.DFR_FIELD, this.ONOFF_FIELD],
 			callback: ({ options }) => {
 				let cmd = `SET DFR${options.dfr}_FREEZE ${options.choice}`
@@ -123,6 +125,6 @@ module.exports = {
 			},
 		}
 
-		return actions
+		this.setActions(actions)
 	},
 }

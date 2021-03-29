@@ -18,7 +18,6 @@ const DEFAULT_LABELS = {
 	17: 'Direct Out 8',
 	18: 'Mix A',
 	19: 'Mix B',
-	20: 'Unassigned',
 }
 
 /**
@@ -65,7 +64,7 @@ class instance_api {
 		if (this.channels[id] === undefined) {
 			this.channels[id] = {
 				prefix:
-					id >= 1 && id <= 9 ? `in_${id}_` : id >= 10 && id <= 17 ? `out_${id - 9}` : id == 18 ? 'mix_A_' : 'mix_b_',
+					id >= 1 && id <= 9 ? `in_${id}_` : id >= 10 && id <= 17 ? `out_${id - 9}_` : id == 18 ? 'mix_a_' : 'mix_b_',
 				name: DEFAULT_LABELS[id], // CHAN_NAME 31 (GS)
 				audioGain: 0, // AUDIO_GAIN_HI_RES 0-1280, -1100 (-inf - +18 dB)
 				audioGain2: '+0 dB', // Text representation of audioGain
@@ -73,12 +72,12 @@ class instance_api {
 				alwaysOnA: 'Unknown', // ALWAYS_ON_ENABLE_A ON|OFF|TOGGLE (GS)
 				alwaysOnB: 'Unknown', // ALWAYS_ON_ENABLE_B ON|OFF|TOGGLE (GS)
 				intellimixMode: 'Unknown', // INTELLIMIX_MODE CLASSIC|SMOOTH|EXTREME|CUSTOM|MANUAL|CUSTOM_PRESET (GS)
-				audioGateA: 'OFF', // INPUT_AUDIO_GATE_A ON|OFF (G)
-				audioGateB: 'OFF', // INPUT_AUDIO_GATE_B ON|OFF (G)
+				audioGateA: 'Unknown', // INPUT_AUDIO_GATE_A ON|OFF (G)
+				audioGateB: 'Unknown', // INPUT_AUDIO_GATE_B ON|OFF (G)
 				limiterEngaged: 'OFF', // LIMITER_ENGAGED ON|OFF (G)
 				audioClip: 'OFF', // AUDIO_IN_CLIP_INDICATOR|AUDIO_OUT_CLIP_INDICATOR ON|OFF (G)
 				audioLevel: 0, // SAMPLE 0-120, -120 dB
-				audioBitmap: Math.floor(Math.random() * (8 - 0) + 0), // AUDIO_LEVEL (derived) 0-7, 10-17 w/clip
+				audioBitmap: 0, // AUDIO_LEVEL (derived) 0-7, 10-17 w/clip
 			}
 		}
 
@@ -100,8 +99,8 @@ class instance_api {
 
 		audioIn = chIn.audioBitmap
 		audioOut = id == 9 ? null : chOut.audioBitmap
-		aOn = id == 9 ? null : chIn.audioGateA
-		bOn = id == 9 ? null : chIn.audioGateB
+		aOn = id == 9 ? null : chIn.audioGateA == 'OFF' ? 'ON' : 'OFF'
+		bOn = id == 9 ? null : chIn.audioGateB == 'OFF' ? 'ON' : 'OFF'
 		mute = chIn.audioMute
 		dfr = id == 9 ? null : this.getDfr(1).assignedChan == id ? 1 : this.getDfr(2).assignedChan == id ? 2 : 0
 
@@ -280,9 +279,9 @@ class instance_api {
 	 * @since 1.0.0
 	 */
 	updateChannel(id, key, value) {
-		var channel = this.getChannel(id)
-		var prefix = channel.prefix
-		var variable
+		let channel = this.getChannel(id)
+		let prefix = channel.prefix
+		let variable
 
 		if (value == 'UNKN' || value == 'UNKNOWN') {
 			value = 'Unknown'
@@ -291,39 +290,102 @@ class instance_api {
 		if (key.match(/AUDIO_GAIN/)) {
 			channel.audioGain = (parseInt(value) - 1100) / 10
 			channel.audioGain2 =
-				(channel.audioGain == -1100 ? '-INF' : (channel.audioGain > 0 ? '+' : '') + channel.audioGain.toString()) +
+				(channel.audioGain == -1100 ? '-INF' : (channel.audioGain > 0 ? '+' : '-') + channel.audioGain.toString()) +
 				' dB'
 			this.instance.setVariable(prefix + 'audio_gain', channel.audioGain2)
-			//this.instance.checkFeedbacks('channel_gain')
+			this.instance.checkFeedbacks('input_levels')
+			this.instance.checkFeedbacks('output_levels')
+			this.instance.checkFeedbacks('mixer_levels')
+			this.instance.checkFeedbacks('channel_status')
+			this.instance.checkFeedbacks('mixer_status')
+			this.instance.checkFeedbacks('audio_gain')
 		} else if (key == 'AUDIO_LEVEL') {
 			channel.audioLevel = parseInt(value) - 120
 			variable = channel.audioLevel.toString() + ' dB'
-			this.instance.setVariable(prefix + 'audio_level', variable)
 			channel.audioBitmap = this.getLevelBitmap(channel.audioLevel, channel.audioClip)
+			this.instance.checkFeedbacks('input_levels')
+			this.instance.checkFeedbacks('output_levels')
+			this.instance.checkFeedbacks('mixer_levels')
+			this.instance.checkFeedbacks('channel_status')
+			this.instance.checkFeedbacks('mixer_status')
 		} else if (key == 'AUDIO_MUTE') {
 			channel.audioMute = value
 			this.instance.setVariable(prefix + 'audio_mute', value)
+			this.instance.checkFeedbacks('channel_status')
+			this.instance.checkFeedbacks('mixer_status')
+			this.instance.checkFeedbacks('audio_mute')
 		} else if (key == 'ALWAYS_ON_ENABLE_A') {
 			channel.alwaysOnA = value
 			this.instance.setVariable(prefix + 'always_on_enable_a', value)
+			this.instance.checkFeedbacks('always_on_enable')
 		} else if (key == 'ALWAYS_ON_ENABLE_B') {
 			channel.alwaysOnB = value
 			this.instance.setVariable(prefix + 'always_on_enable_b', value)
+			this.instance.checkFeedbacks('always_on_enable')
+		} else if (key == 'CHAN_NAME') {
+			channel.name = value.replace('{', '').replace('}', '').trim()
+			this.instance.setVariable(prefix + 'name', channel.name)
+			if (this.initDone === true) {
+				this.instance.initActions()
+				this.instance.initFeedbacks()
+			}
 		} else if (key == 'INTELLIMIX_MODE') {
 			channel.intellimixMode = value
 			this.instance.setVariable(prefix + 'intellimix_mode', value)
+			this.instance.checkFeedbacks('mixer_status')
+			this.instance.checkFeedbacks('intellimix_mode')
 		} else if (key == 'INPUT_AUDIO_GATE_A') {
 			channel.audioGateA = value
 			this.instance.setVariable(prefix + 'input_audio_gate_a', value)
 		} else if (key == 'INPUT_AUDIO_GATE_B') {
 			channel.audioGateB = value
 			this.instance.setVariable(prefix + 'input_audio_gate_b', value)
-		} else if (key == 'LIMITED_ENGAGED') {
+		} else if (key == 'LIMITER_ENGAGED') {
 			channel.limiterEngaged = value
-			this.instance.setVariable(prefix + 'limited_engaged', value)
+			this.instance.setVariable(prefix + 'limiter_engaged', value)
+			this.instance.checkFeedbacks('mixer_levels')
+			this.instance.checkFeedbacks('mixer_status')
 		} else if (key.match(/_CLIP_INDICATOR/)) {
 			channel.audioClip = value
 			this.instance.setVariable(prefix + 'clip_indicator', value)
+			this.instance.checkFeedbacks('input_levels')
+			this.instance.checkFeedbacks('output_levels')
+			this.instance.checkFeedbacks('mixer_levels')
+			this.instance.checkFeedbacks('channel_status')
+			this.instance.checkFeedbacks('mixer_status')
+		}
+	}
+
+	/**
+	 * Update a dfr property.
+	 *
+	 * @param {number} id - the dfr id
+	 * @param {String} key - the command id
+	 * @param {String} value - the new value
+	 * @access public
+	 * @since 1.0.0
+	 */
+	updateDfr(id, key, value) {
+		let dfr = this.getDfr(id)
+		let prefix = `dfr${id}_`
+		let variable
+
+		if (value == 'UNKN' || value == 'UNKNOWN') {
+			value = 'Unknown'
+		}
+
+		if (key.match(/_ASSIGNED_CHAN/)) {
+			dfr.assignedChan = parseInt(value)
+			this.instance.setVariable(prefix + 'assigned_chan', dfr.assignedChan)
+			this.instance.checkFeedbacks('dfr_assigned_chan')
+		} else if (key.match(/_BYPASS/)) {
+			dfr.bypass = value
+			this.instance.setVariable(prefix + 'bypass', dfr.bypass)
+			this.instance.checkFeedbacks('dfr_bypass')
+		} else if (key.match(/_FREEZE/)) {
+			dfr.freeze = value
+			this.instance.setVariable(prefix + 'freeze', dfr.freeze)
+			this.instance.checkFeedbacks('dfr_freeze')
 		}
 	}
 
@@ -341,14 +403,15 @@ class instance_api {
 		}
 
 		if (key == 'DEVICE_ID') {
-			this.receiver.deviceId = value
+			this.receiver.deviceId = value.replace('{', '').replace('}', '').trim()
 			this.instance.setVariable('device_id', this.receiver.deviceId)
 		} else if (key == 'AUTO_LINK_MODE') {
 			this.receiver.autoLinkMode = value
 			this.instance.setVariable('auto_link_mode', this.receiver.autoLinkMode)
-		} else if (key == 'FLASH') {
+			this.instance.checkFeedbacks('auto_link_mode')
+		} else if (key == 'METER_RATE') {
 			this.receiver.meterRate = parseInt(value)
-			this.instance.setVariable('meter_rate', this.receiver.meterRate)
+			this.instance.setVariable('meter_rate', this.receiver.meterRate.toString() + ' ms')
 		}
 	}
 }

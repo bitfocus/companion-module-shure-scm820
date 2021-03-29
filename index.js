@@ -1,10 +1,10 @@
-var tcp = require('../../tcp')
-var instance_skel = require('../../instance_skel')
+const tcp = require('../../tcp')
+const instance_skel = require('../../instance_skel')
 
-var instance_api = require('./internalAPI')
-var actions = require('./actions')
-var feedback = require('./feedback')
-var variables = require('./variables')
+const instance_api = require('./internalAPI')
+const actions = require('./actions')
+const feedback = require('./feedback')
+const variables = require('./variables')
 
 /**
  * Companion instance class for the Shure SCM820.
@@ -28,6 +28,9 @@ class instance extends instance_skel {
 
 		this.initDone = false
 
+		this.heartbeatInterval = null
+		this.heartbeatTimeout = null
+
 		Object.assign(this, {
 			...actions,
 			...feedback,
@@ -46,18 +49,7 @@ class instance extends instance_skel {
 
 		this.setupFields()
 
-		this.actions() // export actions
-	}
-
-	/**
-	 * Setup the actions.
-	 *
-	 * @access public
-	 * @since 1.0.0
-	 */
-	actions() {
-		this.setupChannelChoices()
-		this.setActions(this.getActions())
+		this.initActions() // export actions
 	}
 
 	/**
@@ -77,12 +69,13 @@ class instance extends instance_skel {
 				regex: this.REGEX_IP,
 			},
 			{
-				type: 'textinput',
+				type: 'number',
 				id: 'port',
 				label: 'Target Port',
 				default: 2202,
 				width: 2,
-				regex: this.REGEX_PORT,
+				min: 1,
+				max: 65534,
 			},
 			{
 				type: 'checkbox',
@@ -98,7 +91,7 @@ class instance extends instance_skel {
 				width: 4,
 				min: 250,
 				max: 99999,
-				default: 2000,
+				default: 1000,
 				required: true,
 			},
 		]
@@ -113,6 +106,16 @@ class instance extends instance_skel {
 	destroy() {
 		if (this.socket !== undefined) {
 			this.socket.destroy()
+			delete this.socket
+			this.initDone = false
+		}
+
+		if (this.heartbeatInterval !== undefined) {
+			clearInterval(this.heartbeatInterval)
+		}
+
+		if (this.heartbeatTimeout !== undefined) {
+			clearTimeout(this.heartbeatTimeout)
 		}
 
 		this.debug('destroy', this.id)
@@ -128,8 +131,8 @@ class instance extends instance_skel {
 	init() {
 		this.status(this.STATUS_WARNING, 'Connecting')
 
-		this.initVariables()
 		this.initFeedbacks()
+		this.initVariables()
 
 		this.checkFeedbacks()
 
@@ -143,11 +146,20 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	initTCP() {
-		var receivebuffer = ''
+		this.receiveBuffer = ''
 
 		if (this.socket !== undefined) {
 			this.socket.destroy()
 			delete this.socket
+			this.initDone = false
+		}
+
+		if (this.heartbeatInterval !== undefined) {
+			clearInterval(this.heartbeatInterval)
+		}
+
+		if (this.heartbeatTimeout !== undefined) {
+			clearTimeout(this.heartbeatTimeout)
 		}
 
 		if (this.config.port === undefined) {
@@ -196,27 +208,42 @@ class instance extends instance_skel {
 
 				this.socket.send(cmd)
 
-				this.actions() // export actions
+				this.heartbeatInterval = setInterval(() => {
+					this.socket.send('< GET 1 METER_RATE >')
+				}, 30000)
+
+				this.initDone = true
+
+				this.initActions()
+				this.initFeedbacks()
 			})
 
 			// separate buffered stream into lines with responses
 			this.socket.on('data', (chunk) => {
-				var i = 0,
+				let i = 0,
 					line = '',
 					offset = 0
-				receivebuffer += chunk
+				this.receiveBuffer += chunk
 
-				while ((i = receivebuffer.indexOf('>', offset)) !== -1) {
-					line = receivebuffer.substr(offset, i - offset)
+				while ((i = this.receiveBuffer.indexOf('>', offset)) !== -1) {
+					line = this.receiveBuffer.substr(offset, i - offset)
 					offset = i + 1
 					this.socket.emit('receiveline', line.toString())
 				}
 
-				receivebuffer = receivebuffer.substr(offset)
+				this.receiveBuffer = this.receiveBuffer.substr(offset)
 			})
 
 			this.socket.on('receiveline', (line) => {
 				this.processShureCommand(line.replace('< ', '').trim())
+
+				if (line.match(/METER_RATE/)) {
+					if (this.heartbeatTimeout !== undefined) {
+						clearTimeout(this.heartbeatTimeout)
+					}
+
+					this.heartbeatTimeout = setTimeout(this.initTCP.bind(this), 60000)
+				}
 			})
 		}
 	}
@@ -277,7 +304,7 @@ class instance extends instance_skel {
 		this.CHOICES_CHANNELS = []
 		let data
 
-		for (var i = 1; i <= 8; i++) {
+		for (let i = 1; i <= 8; i++) {
 			data = 'Channel ' + i
 
 			if (this.api.getChannel(i).name != '' && this.api.getChannel(i).name !== data) {
@@ -292,7 +319,7 @@ class instance extends instance_skel {
 
 		data = 'Aux In'
 
-		if (this.api.getChannel(9).name != '' && this.api.getChannel(i).name !== data) {
+		if (this.api.getChannel(9).name != '' && this.api.getChannel(9).name !== data) {
 			data += ' (' + this.api.getChannel(9).name + ')'
 		}
 
@@ -301,7 +328,7 @@ class instance extends instance_skel {
 
 		data = 'Mix A'
 
-		if (this.api.getChannel(18).name != '' && this.api.getChannel(i).name !== data) {
+		if (this.api.getChannel(18).name != '' && this.api.getChannel(18).name !== data) {
 			data += ' (' + this.api.getChannel(18).name + ')'
 		}
 
@@ -311,13 +338,15 @@ class instance extends instance_skel {
 
 		data = 'Mix B'
 
-		if (this.api.getChannel(19).name != '' && this.api.getChannel(i).name !== data) {
+		if (this.api.getChannel(19).name != '' && this.api.getChannel(19).name !== data) {
 			data += ' (' + this.api.getChannel(19).name + ')'
 		}
 
 		this.CHOICES_CHANNELS.push({ id: 19, label: data })
 		this.CHOICES_CHANNELS_IMU.push({ id: 19, label: data })
 		this.CHOICES_CHANNELS_M.push({ id: 19, label: data })
+
+		this.CHOICES_CHANNELS_IMU.push({ id: 20, label: 'Unassigned' })
 	}
 
 	/**
@@ -471,8 +500,8 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
-		var resetConnection = false
-		var cmd
+		let resetConnection = false
+		let cmd
 
 		if (this.config.host != config.host) {
 			resetConnection = true
@@ -490,7 +519,7 @@ class instance extends instance_skel {
 
 		this.config = config
 
-		this.actions()
+		this.initActions()
 		this.initFeedbacks()
 		this.initVariables()
 
