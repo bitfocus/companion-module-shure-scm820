@@ -22,18 +22,18 @@ This module will connect to the Shure SCM820 Digital IntelliMix Automatic Mixer 
 
 ### Available feedbacks
 
-| Title                    | Type   | Support              | Preview                                                     |
-| ------------------------ | ------ | -------------------- | ----------------------------------------------------------- |
-| Input Levels Display     | Icon   | Channels 1-8, Aux In | ![Input Levels Display](icons/example-input-levels.png)     |
-| Output Levels Display    | Icon   | Channels 1-8         | ![Output Levels Display](icons/example-output-levels.png)   |
-| Mixer Levels Display     | Icon   | Mix A & B            | ![Mixer Levels Display](icons/example-mixer-levels.png)     |
-| Channel Status Display   | Icon   | Channels 1-8, Aux In | ![Channel Status Display](icons/example-channel-status.png) |
-| Mixer Status Display     | Icon   | Mix A & B            | ![Mixer Status Display](icons/example-mixer-status.png)     |
-| Channel Mute             | BG, FG | All                  |                                                             |
-| Channel Gain             | BG, FG | All                  |                                                             |
-| Channel Always on in Mix | BG, FG | Channels 1-8         |                                                             |
-| IntelliMix Mode          | BG, FG | Mix A & B            |                                                             |
-| DFR Assigned Channel     | BG, FG | DFR 1 & 2            |                                                             |
-| DFR Bypassed             | BG, FG | DFR 1 & 2            |                                                             |
-| DFR Frozen               | BG, FG | DFR 1 & 2            |                                                             |
-| Auto Link Mode Enabled   | BG, FG | Mixer                |                                                             |
+| Title                    | Type   | Support              | Description                                                                                                                        | Preview                                                     |
+| ------------------------ | ------ | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Input Levels Display     | Icon   | Channels 1-8, Aux In | Shows 8 segment meters for inputs 1-9                                                                                              | ![Input Levels Display](icons/example-input-levels.png)     |
+| Output Levels Display    | Icon   | Channels 1-8         | Shows 8 segment meters for direct outputs 1-8                                                                                      | ![Output Levels Display](icons/example-output-levels.png)   |
+| Mixer Levels Display     | Icon   | Mix A & B            | Shows an 8 segment meter, limiter status, and mute status for both mixers                                                          | ![Mixer Levels Display](icons/example-mixer-levels.png)     |
+| Channel Status Display   | Icon   | Channels 1-8, Aux In | Shows an 8 segment meter for the channel in and direct out, gain, gate status for mixers A & B, mute status, and DFR assign status | ![Channel Status Display](icons/example-channel-status.png) |
+| Mixer Status Display     | Icon   | Mix A & B            | Shows an 8 segment meter, IntelliMix Mode, gain, limiter status, mute status, and DFR assign status                                | ![Mixer Status Display](icons/example-mixer-status.png)     |
+| Channel Mute             | BG, FG | All                  |                                                                                                                                    |                                                             |
+| Channel Gain             | BG, FG | All                  |                                                                                                                                    |                                                             |
+| Channel Always on in Mix | BG, FG | Channels 1-8         |                                                                                                                                    |                                                             |
+| IntelliMix Mode          | BG, FG | Mix A & B            |                                                                                                                                    |                                                             |
+| DFR Assigned Channel     | BG, FG | DFR 1 & 2            |                                                                                                                                    |                                                             |
+| DFR Bypassed             | BG, FG | DFR 1 & 2            |                                                                                                                                    |                                                             |
+| DFR Frozen               | BG, FG | DFR 1 & 2            |                                                                                                                                    |                                                             |
+| Auto Link Mode Enabled   | BG, FG | Mixer                |                                                                                                                                    |                                                             |
