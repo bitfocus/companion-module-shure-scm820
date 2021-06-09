@@ -1,16 +1,11 @@
 const tcp = require('../../tcp')
 const instance_skel = require('../../instance_skel')
-
-const instance_api = require('./internalAPI')
-const actions = require('./actions')
-const feedback = require('./feedback')
-const variables = require('./variables')
+const upgrades = require('./upgrades')
 
 /**
  * Companion instance class for the Shure SCM820.
  *
  * @extends instance_skel
- * @version 1.0.0
  * @since 1.0.0
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
@@ -31,6 +26,11 @@ class instance extends instance_skel {
 		this.heartbeatInterval = null
 		this.heartbeatTimeout = null
 
+		let instance_api = require('./internalAPI')
+		let actions = require('./actions')
+		let feedback = require('./feedback')
+		let variables = require('./variables')
+
 		Object.assign(this, {
 			...actions,
 			...feedback,
@@ -45,11 +45,19 @@ class instance extends instance_skel {
 		this.CHOICES_CHANNELS_IMU = []
 		this.CHOICES_CHANNELS_M = []
 
-		this.defineConst('REGEX_CHAR_8', '/^.{1,8}$/')
-
 		this.setupFields()
 
 		this.initActions() // export actions
+	}
+
+	/**
+	 * Provide the upgrade scripts for the module
+	 * @returns {function[]} the scripts
+	 * @static
+	 * @since 1.1.0
+	 */
+	 static GetUpgradeScripts() {
+		return [instance_skel.CreateConvertToBooleanFeedbackUpgradeScript(upgrades.BooleanFeedbackUpgradeMap)]
 	}
 
 	/**
@@ -175,7 +183,7 @@ class instance extends instance_skel {
 
 			this.socket.on('error', (err) => {
 				this.debug('Network error', err)
-				this.log('error', 'Network error: ' + err.message)
+				this.log('error', `Network error: ${err.message}`)
 			})
 
 			this.socket.on('connect', () => {
@@ -203,7 +211,7 @@ class instance extends instance_skel {
 				cmd += '< GET 0 AUDIO_OUT_CLIP_INDICATOR >\r\n'
 
 				if (this.config.meteringOn === true) {
-					cmd += '< SET METER_RATE ' + this.config.meteringInterval + ' >\r\n'
+					cmd += `< SET METER_RATE ${this.config.meteringInterval} >\r\n`
 				}
 
 				this.socket.send(cmd)
@@ -305,10 +313,10 @@ class instance extends instance_skel {
 		let data
 
 		for (let i = 1; i <= 8; i++) {
-			data = 'Channel ' + i
+			data = `Channel {$i}`
 
 			if (this.api.getChannel(i).name != '' && this.api.getChannel(i).name !== data) {
-				data += ' (' + this.api.getChannel(i).name + ')'
+				data += ` (${this.api.getChannel(i).name})`
 			}
 
 			this.CHOICES_CHANNELS.push({ id: i, label: data })
@@ -320,7 +328,7 @@ class instance extends instance_skel {
 		data = 'Aux In'
 
 		if (this.api.getChannel(9).name != '' && this.api.getChannel(9).name !== data) {
-			data += ' (' + this.api.getChannel(9).name + ')'
+			data += ` (${this.api.getChannel(9).name})`
 		}
 
 		this.CHOICES_CHANNELS.push({ id: 9, label: data })
@@ -329,7 +337,7 @@ class instance extends instance_skel {
 		data = 'Mix A'
 
 		if (this.api.getChannel(18).name != '' && this.api.getChannel(18).name !== data) {
-			data += ' (' + this.api.getChannel(18).name + ')'
+			data += ` (${this.api.getChannel(18).name})`
 		}
 
 		this.CHOICES_CHANNELS.push({ id: 18, label: data })
@@ -339,7 +347,7 @@ class instance extends instance_skel {
 		data = 'Mix B'
 
 		if (this.api.getChannel(19).name != '' && this.api.getChannel(19).name !== data) {
-			data += ' (' + this.api.getChannel(19).name + ')'
+			data += ` (${this.api.getChannel(19).name})`
 		}
 
 		this.CHOICES_CHANNELS.push({ id: 19, label: data })
@@ -356,22 +364,6 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	setupFields() {
-		this.BG_COLOR_FIELD = function (defaultColor) {
-			return {
-				type: 'colorpicker',
-				label: 'Background color',
-				id: 'bg',
-				default: defaultColor,
-			}
-		}
-		this.FG_COLOR_FIELD = function (defaultColor) {
-			return {
-				type: 'colorpicker',
-				label: 'Foreground color',
-				id: 'fg',
-				default: defaultColor,
-			}
-		}
 		this.CHANNELS_FIELD = function (type = 'IAM') {
 			let out = {
 				type: 'dropdown',

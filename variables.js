@@ -13,35 +13,35 @@ module.exports = {
 			let prefix = this.api.getChannel(i).prefix
 			let label =
 				i >= 1 && i <= 8
-					? `Channel ${i} `
+					? `Channel ${i}`
 					: i == 9
-					? `Aux In `
+					? `Aux In`
 					: i >= 10 && i <= 17
-					? ` Output ${i - 9} `
+					? ` Output ${i - 9}`
 					: i == 18
-					? 'Mix A '
-					: 'Mix B '
+					? 'Mix A'
+					: 'Mix B'
 
-			variables.push({ name: prefix + 'name', label: label + 'Name' })
+			variables.push({ name: `${prefix}_name`, label: `${label} Name` })
 
 			if (i <= 8) {
-				variables.push({ name: prefix + 'audio_gain', label: label + 'Gain' })
-				variables.push({ name: prefix + 'audio_mute', label: label + 'Mute' })
-				variables.push({ name: prefix + 'always_on_enable_a', label: label + 'Always On Enable A' })
-				variables.push({ name: prefix + 'always_on_enable_b', label: label + 'Always On Enable B' })
-				variables.push({ name: prefix + 'input_audio_gate_a', label: label + 'Input Gate A' })
-				variables.push({ name: prefix + 'input_audio_gate_b', label: label + 'Input Gate B' })
+				variables.push({ name: `${prefix}_audio_gain`, label: `${label} Gain` })
+				variables.push({ name: `${prefix}_audio_mute`, label: `${label} Mute` })
+				variables.push({ name: `${prefix}_always_on_enable_a`, label: `${label} Always On Enable A` })
+				variables.push({ name: `${prefix}_always_on_enable_b`, label: `${label} Always On Enable B` })
+				variables.push({ name: `${prefix}_input_audio_gate_a`, label: `${label} Input Gate A` })
+				variables.push({ name: `${prefix}_input_audio_gate_b`, label: `${label} Input Gate B` })
 			} else if (i == 9) {
-				variables.push({ name: prefix + 'audio_gain', label: label + 'Gain' })
-				variables.push({ name: prefix + 'audio_mute', label: label + 'Mute' })
+				variables.push({ name: `${prefix}_audio_gain`, label: `${label} Gain` })
+				variables.push({ name: `${prefix}_audio_mute`, label: `${label} Mute` })
 			} else if (i >= 18) {
-				variables.push({ name: prefix + 'audio_gain', label: label + 'Gain' })
-				variables.push({ name: prefix + 'audio_mute', label: label + 'Mute' })
-				variables.push({ name: prefix + 'intellimix_mode', label: label + 'IntelliMix Mode' })
-				variables.push({ name: prefix + 'limiter_engaged', label: label + 'Limited Engaged' })
+				variables.push({ name: `${prefix}_audio_gain`, label: `${label} Gain` })
+				variables.push({ name: `${prefix}_audio_mute`, label: `${label} Mute` })
+				variables.push({ name: `${prefix}_intellimix_mode`, label: `${label} IntelliMix Mode` })
+				variables.push({ name: `${prefix}_limiter_engaged`, label: `${label} Limited Engaged` })
 			}
 
-			variables.push({ name: prefix + 'clip_indicator', label: label + 'Clip Indicator' })
+			variables.push({ name: `${prefix}_clip_indicator`, label: `${label} Clip Indicator` })
 		}
 
 		for (let i = 1; i <= 2; i++) {

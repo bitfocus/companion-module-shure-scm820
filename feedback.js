@@ -101,14 +101,14 @@ module.exports = {
 		}
 
 		feedbacks['audio_mute'] = {
+			type: 'boolean',
 			label: 'Channel Mute',
 			description: 'Change color if the selected channel is muted.',
-			options: [
-				this.BG_COLOR_FIELD(this.rgb(255, 255, 0)),
-				this.FG_COLOR_FIELD(this.rgb(0, 0, 0)),
-				this.CHANNELS_FIELD(),
-				this.ONOFF_FIELD,
-			],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [this.CHANNELS_FIELD(), this.ONOFF_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getChannel(parseInt(options.channel)).audioMute == options.choice) {
 					return {
@@ -119,14 +119,14 @@ module.exports = {
 			},
 		}
 		feedbacks['audio_gain'] = {
+			type: 'boolean',
 			label: 'Channel Gain',
 			description: 'Change color if the channel gain it set to a level.',
-			options: [
-				this.BG_COLOR_FIELD(this.rgb(255, 255, 0)),
-				this.FG_COLOR_FIELD(this.rgb(0, 0, 0)),
-				this.CHANNELS_FIELD(),
-				this.GAIN_SET_FIELD,
-			],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [this.CHANNELS_FIELD(), this.GAIN_SET_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getChannel(parseInt(options.channel)).audioGain == options.gain) {
 					return {
@@ -138,14 +138,14 @@ module.exports = {
 		}
 
 		feedbacks['always_on_enable'] = {
+			type: 'boolean',
 			label: 'Channel Always On in Mix',
 			description: 'Change color if the channel is set always on in the mix.',
-			options: [
-				this.BG_COLOR_FIELD(this.rgb(255, 255, 0)),
-				this.FG_COLOR_FIELD(this.rgb(0, 0, 0)),
-				this.MIXER_FIELD,
-				this.CHANNELS_FIELD('I'),
-			],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [this.MIXER_FIELD, this.CHANNELS_FIELD('I')],
 			callback: ({ options }) => {
 				if (
 					(options.mix == 'A' && this.api.getChannel(parseInt(options.channel)).alwaysOnA == 'ON') ||
@@ -160,14 +160,14 @@ module.exports = {
 		}
 
 		feedbacks['intellimix_mode'] = {
+			type: 'boolean',
 			label: 'IntelliMix Mode',
 			description: "Change color if the mixer's IntelliMix mode is selected.",
-			options: [
-				this.BG_COLOR_FIELD(this.rgb(255, 255, 0)),
-				this.FG_COLOR_FIELD(this.rgb(0, 0, 0)),
-				this.CHANNELS_FIELD('M'),
-				this.INTELLIMIX_MODE_FIELD,
-			],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [this.CHANNELS_FIELD('M'), this.INTELLIMIX_MODE_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getChannel(parseInt(options.channel)).intellimixMode == options.choice) {
 					return {
@@ -179,14 +179,14 @@ module.exports = {
 		}
 
 		feedbacks['dfr_assigned_chan'] = {
+			type: 'boolean',
 			label: 'DFR Assigned Channel',
 			description: 'Change color if the selected channel is assigned to the DFR.',
-			options: [
-				this.BG_COLOR_FIELD(this.rgb(255, 255, 0)),
-				this.FG_COLOR_FIELD(this.rgb(0, 0, 0)),
-				this.DFR_FIELD,
-				this.CHANNELS_FIELD('IMU'),
-			],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [this.DFR_FIELD, this.CHANNELS_FIELD('IMU')],
 			callback: ({ options }) => {
 				if (this.api.getDfr(parseInt(options.dfr)).assignedChan == options.channel) {
 					return {
@@ -197,9 +197,14 @@ module.exports = {
 			},
 		}
 		feedbacks['dfr_bypass'] = {
+			type: 'boolean',
 			label: 'DFR Bypassed',
 			description: 'Change color if the selected DFR is set to bypass.',
-			options: [this.BG_COLOR_FIELD(this.rgb(255, 255, 0)), this.FG_COLOR_FIELD(this.rgb(0, 0, 0)), this.DFR_FIELD],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [this.DFR_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getDfr(parseInt(options.dfr)).bypass == 'ON') {
 					return {
@@ -210,9 +215,14 @@ module.exports = {
 			},
 		}
 		feedbacks['dfr_freeze'] = {
+			type: 'boolean',
 			label: 'DFR Frozen',
 			description: 'Change color if the selected DFR is frozen.',
-			options: [this.BG_COLOR_FIELD(this.rgb(0, 0, 255)), this.FG_COLOR_FIELD(this.rgb(255, 255, 255)), this.DFR_FIELD],
+			style: {
+				color: this.rgb(255, 255, 255),
+				bgcolor: this.rgb(0, 0, 255),
+			},
+			options: [this.DFR_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getDfr(parseInt(options.dfr)).frozen == 'ON') {
 					return {
@@ -224,9 +234,14 @@ module.exports = {
 		}
 
 		feedbacks['auto_link_mode'] = {
+			type: 'boolean',
 			label: 'Auto Link Mode Enabled',
 			description: 'Change color if auto link mode is enabled.',
-			options: [this.BG_COLOR_FIELD(this.rgb(255, 255, 0)), this.FG_COLOR_FIELD(this.rgb(0, 0, 0))],
+			style: {
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0),
+			},
+			options: [],
 			callback: ({ options }) => {
 				if (this.api.getReceiver().autoLinkMode == 'ON') {
 					return {

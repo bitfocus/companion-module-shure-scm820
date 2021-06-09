@@ -64,7 +64,7 @@ class instance_api {
 		if (this.channels[id] === undefined) {
 			this.channels[id] = {
 				prefix:
-					id >= 1 && id <= 9 ? `in_${id}_` : id >= 10 && id <= 17 ? `out_${id - 9}_` : id == 18 ? 'mix_a_' : 'mix_b_',
+					id >= 1 && id <= 9 ? `in_${id}` : id >= 10 && id <= 17 ? `out_${id - 9}` : id == 18 ? 'mix_a' : 'mix_b',
 				name: DEFAULT_LABELS[id], // CHAN_NAME 31 (GS)
 				audioGain: 0, // AUDIO_GAIN_HI_RES 0-1280, -1100 (-inf - +18 dB)
 				audioGain2: '+0 dB', // Text representation of audioGain
