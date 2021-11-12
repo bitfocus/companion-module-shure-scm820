@@ -138,7 +138,7 @@ class instance_api {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getInputLevelsIcon() {
+	getInputLevelsIcon(info) {
 		this.icons.setRaster(info)
 
 		return this.icons.getInputLevels(
@@ -211,7 +211,7 @@ class instance_api {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getMixerIcon(id) {
+	getMixerIcon(id, info) {
 		let ch = this.getChannel(id)
 
 		this.icons.setRaster(info)
@@ -227,7 +227,7 @@ class instance_api {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getMixerLevelsIcon() {
+	getMixerLevelsIcon(info) {
 		this.icons.setRaster(info)
 
 		return this.icons.getMixLevels(
@@ -248,7 +248,7 @@ class instance_api {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getOutputLevelsIcon() {
+	getOutputLevelsIcon(info) {
 		this.icons.setRaster(info)
 
 		return this.icons.getOutputLevels(

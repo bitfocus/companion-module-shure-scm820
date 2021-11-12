@@ -310,6 +310,11 @@ class instance extends instance_skel {
 	 */
 	setupChannelChoices() {
 		this.CHOICES_CHANNELS = []
+		this.CHOICES_CHANNELS_I = []
+		this.CHOICES_CHANNELS_IA = []
+		this.CHOICES_CHANNELS_IMU = []
+		this.CHOICES_CHANNELS_M = []
+
 		let data
 
 		for (let i = 1; i <= 8; i++) {
