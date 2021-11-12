@@ -16,6 +16,8 @@ class instance_icons {
 		this.instance = instance
 		this.Image = instance.Image
 		this.rgb = instance.rgb
+		this.width = 72
+		this.height = 58
 
 		this.savedIcons = {}
 
@@ -152,6 +154,17 @@ class instance_icons {
 	}
 
 	/**
+	 * Returns a new image with a proper raster
+	 *
+	 * @returns {Image} the new image
+	 * @access protected
+	 * @since 1.1.0
+	 */
+	getBaseImage() {
+		return new this.Image(this.width, this.height)
+	}
+
+	/**
 	 * Returns the desired channel state icon.
 	 *
 	 * @param {number} audioIn - the channel input bitmap
@@ -175,7 +188,7 @@ class instance_icons {
 		let out
 
 		if (this.savedIcons[id] === undefined) {
-			let img = new this.Image()
+			let img = this.getBaseImage()
 
 			if (audioOut !== null) {
 				this.drawFromPNGdata(img, this.AUDIO[audioIn], 59, 13, 4, 42, 'left', 'top')
@@ -227,7 +240,7 @@ class instance_icons {
 		let out
 
 		if (this.savedIcons[id] === undefined) {
-			let img = new this.Image()
+			let img = this.getBaseImage()
 
 			this.drawFromPNGdata(img, this.AUDIO[i1], 10, 14, 4, 42, 'left', 'top')
 			this.drawFromPNGdata(img, this.AUDIO[i2], 17, 14, 4, 42, 'left', 'top')
@@ -267,7 +280,7 @@ class instance_icons {
 		let out
 
 		if (this.savedIcons[id] === undefined) {
-			let img = new this.Image()
+			let img = this.getBaseImage()
 
 			this.drawFromPNGdata(img, this.AUDIO[mA], 28, 14, 4, 42, 'left', 'top')
 			this.drawFromPNGdata(img, this.AUDIO[mB], 38, 14, 4, 42, 'left', 'top')
@@ -301,7 +314,7 @@ class instance_icons {
 		let out
 
 		if (this.savedIcons[id] === undefined) {
-			let img = new this.Image()
+			let img = this.getBaseImage()
 
 			this.drawFromPNGdata(img, this.AUDIO[audio], 65, 13, 4, 42, 'left', 'top')
 			this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 31, 7, 7, 'left', 'top')
@@ -337,7 +350,7 @@ class instance_icons {
 		let out
 
 		if (this.savedIcons[id] === undefined) {
-			let img = new this.Image()
+			let img = this.getBaseImage()
 
 			this.drawFromPNGdata(img, this.AUDIO[o1], 13, 14, 4, 42, 'left', 'top')
 			this.drawFromPNGdata(img, this.AUDIO[o2], 20, 14, 4, 42, 'left', 'top')
@@ -356,6 +369,21 @@ class instance_icons {
 		}
 
 		return out
+	}
+
+	/**
+	 * Set the raster to the current setting
+	 *
+	 * @param {Object} info - the bank configuration
+	 * @access public
+	 * @since 1.1.0
+	 */
+	setRaster(info) {
+		if (info.height !== this.height || info.width !== this.width) {
+			this.height = info.height
+			this.width = info.width
+			this.savedIcons = {}
+		}
 	}
 }
 

@@ -13,10 +13,10 @@ module.exports = {
 			label: 'Input Levels Display',
 			description: 'Provide a visual display of the input levels.',
 			options: [],
-			callback: (feedback, bank) => {
+			callback: (feedback, bank, info) => {
 				let out = {
 					alignment: 'center:top',
-					img64: this.api.getInputLevelsIcon(),
+					img64: this.api.getInputLevelsIcon(info),
 					size: '7',
 					text: 'I:123456789',
 				}
@@ -28,10 +28,10 @@ module.exports = {
 			label: 'Output Levels Display',
 			description: 'Provide a visual display of the output levels.',
 			options: [],
-			callback: (feedback, bank) => {
+			callback: (feedback, bank, info) => {
 				let out = {
 					alignment: 'center:top',
-					img64: this.api.getOutputLevelsIcon(),
+					img64: this.api.getOutputLevelsIcon(info),
 					size: '7',
 					text: 'O:12345678',
 				}
@@ -43,10 +43,10 @@ module.exports = {
 			label: 'Mixer Levels Display',
 			description: 'Provide a visual display of the mixer levels.',
 			options: [],
-			callback: (feedback, bank) => {
+			callback: (feedback, bank, info) => {
 				let out = {
 					alignment: 'center:top',
-					img64: this.api.getMixerLevelsIcon(),
+					img64: this.api.getMixerLevelsIcon(info),
 					size: '7',
 					text: 'MIX A B OUT\\n\\nLIM      LIM',
 				}
@@ -59,12 +59,12 @@ module.exports = {
 			label: 'Channel Status Display',
 			description: "Provide a visual display of the channel's status.",
 			options: [this.CHANNELS_FIELD('IA')],
-			callback: (feedback, bank) => {
+			callback: (feedback, bank, info) => {
 				let opt = feedback.options
 				let channel = this.api.getChannel(parseInt(opt.channel))
 				let out = {
 					alignment: 'left:top',
-					img64: this.api.getChannelIcon(parseInt(opt.channel)),
+					img64: this.api.getChannelIcon(parseInt(opt.channel), info),
 					size: '7',
 					text: '',
 				}
@@ -81,12 +81,12 @@ module.exports = {
 			label: 'Mix Status Display',
 			description: "Provide a visual display of the mix's status.",
 			options: [this.CHANNELS_FIELD('M')],
-			callback: (feedback, bank) => {
+			callback: (feedback, bank, info) => {
 				let opt = feedback.options
 				let channel = this.api.getChannel(parseInt(opt.channel))
 				let out = {
 					alignment: 'left:top',
-					img64: this.api.getMixerIcon(parseInt(opt.channel)),
+					img64: this.api.getMixerIcon(parseInt(opt.channel), info),
 					size: '7',
 					text: '',
 				}
@@ -111,10 +111,9 @@ module.exports = {
 			options: [this.CHANNELS_FIELD(), this.ONOFF_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getChannel(parseInt(options.channel)).audioMute == options.choice) {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -129,10 +128,9 @@ module.exports = {
 			options: [this.CHANNELS_FIELD(), this.GAIN_SET_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getChannel(parseInt(options.channel)).audioGain == options.gain) {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -151,10 +149,9 @@ module.exports = {
 					(options.mix == 'A' && this.api.getChannel(parseInt(options.channel)).alwaysOnA == 'ON') ||
 					(options.mix == 'B' && this.api.getChannel(parseInt(options.channel)).alwaysOnB == 'ON')
 				) {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -170,10 +167,9 @@ module.exports = {
 			options: [this.CHANNELS_FIELD('M'), this.INTELLIMIX_MODE_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getChannel(parseInt(options.channel)).intellimixMode == options.choice) {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -189,10 +185,9 @@ module.exports = {
 			options: [this.DFR_FIELD, this.CHANNELS_FIELD('IMU')],
 			callback: ({ options }) => {
 				if (this.api.getDfr(parseInt(options.dfr)).assignedChan == options.channel) {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -207,10 +202,9 @@ module.exports = {
 			options: [this.DFR_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getDfr(parseInt(options.dfr)).bypass == 'ON') {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -225,10 +219,9 @@ module.exports = {
 			options: [this.DFR_FIELD],
 			callback: ({ options }) => {
 				if (this.api.getDfr(parseInt(options.dfr)).frozen == 'ON') {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+					return true
+				} else {
+					return false
 				}
 			},
 		}
@@ -243,11 +236,10 @@ module.exports = {
 			},
 			options: [],
 			callback: ({ options }) => {
-				if (this.api.getReceiver().autoLinkMode == 'ON') {
-					return {
-						color: options.fg,
-						bgcolor: options.bg,
-					}
+				if (this.api.getMixer().autoLinkMode == 'ON') {
+					return true
+				} else {
+					return false
 				}
 			},
 		}

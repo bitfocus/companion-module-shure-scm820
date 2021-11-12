@@ -22,7 +22,7 @@ const DEFAULT_LABELS = {
 
 /**
  * Companion instance API class for Shure SCM820.
- * Utilized to track the state of the receiver and channels.
+ * Utilized to track the state of the mixer and channels.
  *
  * @version 1.0.0
  * @since 1.0.0
@@ -63,8 +63,7 @@ class instance_api {
 	getChannel(id) {
 		if (this.channels[id] === undefined) {
 			this.channels[id] = {
-				prefix:
-					id >= 1 && id <= 9 ? `in_${id}` : id >= 10 && id <= 17 ? `out_${id - 9}` : id == 18 ? 'mix_a' : 'mix_b',
+				prefix: id >= 1 && id <= 9 ? `in_${id}` : id >= 10 && id <= 17 ? `out_${id - 9}` : id == 18 ? 'mix_a' : 'mix_b',
 				name: DEFAULT_LABELS[id], // CHAN_NAME 31 (GS)
 				audioGain: 0, // AUDIO_GAIN_HI_RES 0-1280, -1100 (-inf - +18 dB)
 				audioGain2: '+0 dB', // Text representation of audioGain
@@ -88,14 +87,17 @@ class instance_api {
 	 * Returns the desired channel status icon.
 	 *
 	 * @param {number} id - the channel to fetch
+	 * @param {Object} info - the bank configuration
 	 * @returns {String} the icon
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getChannelIcon(id) {
+	getChannelIcon(id, info) {
 		let chIn = this.getChannel(id)
 		let chOut = this.getChannel(id + 9)
 		let audioIn, audioOut, aOn, bOn, mute, dfr
+
+		this.icons.setRaster(info)
 
 		audioIn = chIn.audioBitmap
 		audioOut = id == 9 ? null : chOut.audioBitmap
@@ -131,11 +133,14 @@ class instance_api {
 	/**
 	 * Returns the input levels icon.
 	 *
+	 * @param {Object} info - the bank configuration
 	 * @returns {String} the icon
 	 * @access public
 	 * @since 1.0.0
 	 */
 	getInputLevelsIcon() {
+		this.icons.setRaster(info)
+
 		return this.icons.getInputLevels(
 			this.getChannel(1).audioBitmap,
 			this.getChannel(2).audioBitmap,
@@ -194,13 +199,14 @@ class instance_api {
 	 * @since 1.0.0
 	 */
 	getMixer() {
-		return this.receiver
+		return this.mixer
 	}
 
 	/**
 	 * Returns the desired channel status icon.
 	 *
 	 * @param {number} id - the channel to fetch
+	 * @param {Object} info - the bank configuration
 	 * @returns {String} the icon
 	 * @access public
 	 * @since 1.0.0
@@ -208,17 +214,22 @@ class instance_api {
 	getMixerIcon(id) {
 		let ch = this.getChannel(id)
 
+		this.icons.setRaster(info)
+
 		return this.icons.getMixStatus(ch.audioBitmap, ch.limiterEngaged, ch.audioMute)
 	}
 
 	/**
 	 * Returns the mixer levels icon.
 	 *
+	 * @param {Object} info - the bank configuration
 	 * @returns {String} the icon
 	 * @access public
 	 * @since 1.0.0
 	 */
 	getMixerLevelsIcon() {
+		this.icons.setRaster(info)
+
 		return this.icons.getMixLevels(
 			this.getChannel(18).audioBitmap,
 			this.getChannel(19).audioBitmap,
@@ -232,11 +243,14 @@ class instance_api {
 	/**
 	 * Returns the output levels icon.
 	 *
+	 * @param {Object} info - the bank configuration
 	 * @returns {String} the icon
 	 * @access public
 	 * @since 1.0.0
 	 */
 	getOutputLevelsIcon() {
+		this.icons.setRaster(info)
+
 		return this.icons.getOutputLevels(
 			this.getChannel(10).audioBitmap,
 			this.getChannel(11).audioBitmap,
@@ -403,15 +417,15 @@ class instance_api {
 		}
 
 		if (key == 'DEVICE_ID') {
-			this.receiver.deviceId = value.replace('{', '').replace('}', '').trim()
-			this.instance.setVariable('device_id', this.receiver.deviceId)
+			this.mixer.deviceId = value.replace('{', '').replace('}', '').trim()
+			this.instance.setVariable('device_id', this.mixer.deviceId)
 		} else if (key == 'AUTO_LINK_MODE') {
-			this.receiver.autoLinkMode = value
-			this.instance.setVariable('auto_link_mode', this.receiver.autoLinkMode)
+			this.mixer.autoLinkMode = value
+			this.instance.setVariable('auto_link_mode', this.mixer.autoLinkMode)
 			this.instance.checkFeedbacks('auto_link_mode')
 		} else if (key == 'METER_RATE') {
-			this.receiver.meterRate = parseInt(value)
-			this.instance.setVariable('meter_rate', this.receiver.meterRate.toString() + ' ms')
+			this.mixer.meterRate = parseInt(value)
+			this.instance.setVariable('meter_rate', this.mixer.meterRate.toString() + ' ms')
 		}
 	}
 }

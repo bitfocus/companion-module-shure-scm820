@@ -56,7 +56,7 @@ class instance extends instance_skel {
 	 * @static
 	 * @since 1.1.0
 	 */
-	 static GetUpgradeScripts() {
+	static GetUpgradeScripts() {
 		return [instance_skel.CreateConvertToBooleanFeedbackUpgradeScript(upgrades.BooleanFeedbackUpgradeMap)]
 	}
 
