@@ -1,26 +1,24 @@
 {
 	"name": "shure-scm820",
-	"version": "1.1.1",
-	"api_version": "1.0.0",
-	"keywords": [
-		"Mixer"
-	],
-	"manufacturer": "Shure",
-	"product": "SCM820",
-	"shortname": "shure-scm820",
-	"description": "",
-	"main": "index.js",
+	"version": "2.0.0",
+	"main": "src/index.js",
+	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"format": "prettier --write ."
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-shure-scm820.git"
 	},
-	"author": "Keith Rocheck <keith.rocheck@gmail.com>",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-shure-scm820/issues"
+	"dependencies": {
+		"@companion-module/base": "~1.1",
+		"pngjs": "~6.0.0"
 	},
-	"homepage": "https://github.com/bitfocus/companion-module-shure-scm820#readme"
+	"devDependencies": {
+		"@companion-module/tools": "~1.0",
+		"prettier": "^2.8.3"
+	},
+	"prettier": "@companion-module/tools/.prettierrc.json"
 }

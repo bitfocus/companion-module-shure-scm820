@@ -1,11 +1,13 @@
+import Image from './vendor/companion/Image.js'
+
 /**
  * Companion instance icons class for Shure SCM820.
  * Utilized to generate/recall the icons for realtime monitoring.
  *
- * @since 1.0.0
+ * @since 1.1.0
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
-class instance_icons {
+export default class Icons {
 	/**
 	 * Create an instance of a Shure icons module.
 	 *
@@ -14,10 +16,6 @@ class instance_icons {
 	 */
 	constructor(instance) {
 		this.instance = instance
-		this.Image = instance.Image
-		this.rgb = instance.rgb
-		this.width = 72
-		this.height = 58
 
 		this.savedIcons = {}
 
@@ -154,19 +152,9 @@ class instance_icons {
 	}
 
 	/**
-	 * Returns a new image with a proper raster
-	 *
-	 * @returns {Image} the new image
-	 * @access protected
-	 * @since 1.1.0
-	 */
-	getBaseImage() {
-		return new this.Image(this.width, this.height)
-	}
-
-	/**
 	 * Returns the desired channel state icon.
 	 *
+	 * @param {Object} image - the image raster object
 	 * @param {number} audioIn - the channel input bitmap
 	 * @param {number} audioOut - the channel direct out bitmap
 	 * @param {String} aOn - a automix gate
@@ -177,43 +165,49 @@ class instance_icons {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getChannelStatus(audioIn, audioOut, aOn, bOn, mute, dfr) {
-		let id =
-			`Ia${audioIn}` +
-			(audioOut !== null ? `b${audioOut}` : '') +
-			(aOn !== null ? `c${aOn}` : '') +
-			(bOn !== null ? `d${bOn}` : '') +
-			`e${mute}` +
-			(dfr !== null ? `f${dfr}` : '')
+	getChannelStatus(image, audioIn, audioOut, aOn, bOn, mute, dfr) {
 		let out
 
-		if (this.savedIcons[id] === undefined) {
-			let img = this.getBaseImage()
+		if (image && image.width && image.height) {
+			let id =
+				image.width +
+				'x' +
+				image.height +
+				`Ia${audioIn}` +
+				(audioOut !== null ? `b${audioOut}` : '') +
+				(aOn !== null ? `c${aOn}` : '') +
+				(bOn !== null ? `d${bOn}` : '') +
+				`e${mute}` +
+				(dfr !== null ? `f${dfr}` : '')
 
-			if (audioOut !== null) {
-				this.drawFromPNGdata(img, this.AUDIO[audioIn], 59, 13, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[audioOut], 65, 13, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.MUTE[mute], 44, 41, 13, 13, 'left', 'top')
+			if (this.savedIcons[id] === undefined) {
+				let img = new Image(image.width, image.height)
+
+				if (audioOut !== null) {
+					this.drawFromPNGdata(img, this.AUDIO[audioIn], 59, 13, 4, 42, 'left', 'top')
+					this.drawFromPNGdata(img, this.AUDIO[audioOut], 65, 13, 4, 42, 'left', 'top')
+					this.drawFromPNGdata(img, this.MUTE[mute], 44, 41, 13, 13, 'left', 'top')
+				} else {
+					this.drawFromPNGdata(img, this.AUDIO[audioIn], 65, 13, 4, 42, 'left', 'top')
+					this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13, 'left', 'top')
+				}
+
+				if (aOn !== null) {
+					this.drawFromPNGdata(img, this.GATE[aOn], 21, 31, 7, 7, 'left', 'top')
+				}
+				if (bOn !== null) {
+					this.drawFromPNGdata(img, this.GATE[bOn], 36, 31, 7, 7, 'left', 'top')
+				}
+
+				if (dfr !== null && dfr > 0) {
+					this.drawFromPNGdata(img, this.DFR[dfr], 4, 41, 37, 13, 'left', 'top')
+				}
+
+				out = img.toBase64()
+				this.savedIcons[id] = out
 			} else {
-				this.drawFromPNGdata(img, this.AUDIO[audioIn], 65, 13, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13, 'left', 'top')
+				out = this.savedIcons[id]
 			}
-
-			if (aOn !== null) {
-				this.drawFromPNGdata(img, this.GATE[aOn], 21, 31, 7, 7, 'left', 'top')
-			}
-			if (bOn !== null) {
-				this.drawFromPNGdata(img, this.GATE[bOn], 36, 31, 7, 7, 'left', 'top')
-			}
-
-			if (dfr !== null && dfr > 0) {
-				this.drawFromPNGdata(img, this.DFR[dfr], 4, 41, 37, 13, 'left', 'top')
-			}
-
-			out = img.toBase64()
-			this.savedIcons[id] = out
-		} else {
-			out = this.savedIcons[id]
 		}
 
 		return out
@@ -222,6 +216,7 @@ class instance_icons {
 	/**
 	 * Returns the input level meters icon.
 	 *
+	 * @param {Object} image - the image raster object
 	 * @param {number} i1 - input 1 icon
 	 * @param {number} i2 - input 2 icon
 	 * @param {number} i3 - input 3 icon
@@ -235,28 +230,31 @@ class instance_icons {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getInputLevels(i1, i2, i3, i4, i5, i6, i7, i8, i9) {
-		let id = `I${i1}_${i2}_${i3}_${i4}_${i5}_${i6}_${i7}_${i8}_${i9}`
+	getInputLevels(image, i1, i2, i3, i4, i5, i6, i7, i8, i9) {
 		let out
 
-		if (this.savedIcons[id] === undefined) {
-			let img = this.getBaseImage()
+		if (image && image.width && image.height) {
+			let id = `${image.width}x${image.height}I${i1}_${i2}_${i3}_${i4}_${i5}_${i6}_${i7}_${i8}_${i9}`
 
-			this.drawFromPNGdata(img, this.AUDIO[i1], 10, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i2], 17, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i3], 24, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i4], 31, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i5], 38, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i6], 45, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i7], 52, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i8], 59, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[i9], 66, 14, 4, 42, 'left', 'top')
+			if (this.savedIcons[id] === undefined) {
+				let img = new Image(image.width, image.height)
 
-			out = img.toBase64()
+				this.drawFromPNGdata(img, this.AUDIO[i1], 10, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i2], 17, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i3], 24, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i4], 31, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i5], 38, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i6], 45, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i7], 52, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i8], 59, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i9], 66, 14, 4, 42, 'left', 'top')
 
-			this.savedIcons[id] = out
-		} else {
-			out = this.savedIcons[id]
+				out = img.toBase64()
+
+				this.savedIcons[id] = out
+			} else {
+				out = this.savedIcons[id]
+			}
 		}
 
 		return out
@@ -265,6 +263,7 @@ class instance_icons {
 	/**
 	 * Returns the mixer level meters icon.
 	 *
+	 * @param {Object} image - the image raster object
 	 * @param {number} mA - mix A icon
 	 * @param {number} mB - mix B icon
 	 * @param {String} limA - mix A limiter state
@@ -275,12 +274,12 @@ class instance_icons {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getMixLevels(mA, mB, limA, limB, muteA, muteB) {
-		let id = `ML${mA}_${mB}_${limA}_${limB}_${muteA}_${muteB}`
+	getMixLevels(image, mA, mB, limA, limB, muteA, muteB) {
+		let id = `${image.width}x${image.height}ML${mA}_${mB}_${limA}_${limB}_${muteA}_${muteB}`
 		let out
 
 		if (this.savedIcons[id] === undefined) {
-			let img = this.getBaseImage()
+			let img = new Image(image.width, image.height)
 
 			this.drawFromPNGdata(img, this.AUDIO[mA], 28, 14, 4, 42, 'left', 'top')
 			this.drawFromPNGdata(img, this.AUDIO[mB], 38, 14, 4, 42, 'left', 'top')
@@ -302,6 +301,7 @@ class instance_icons {
 	/**
 	 * Returns the mixer level meters icon.
 	 *
+	 * @param {Object} image - the image raster object
 	 * @param {number} audio - audio bitmap
 	 * @param {String} limiter - limiter state
 	 * @param {String} mute - mute state
@@ -309,22 +309,25 @@ class instance_icons {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getMixStatus(audio, limiter, mute) {
-		let id = `MS${audio}_${limiter}_${mute}`
+	getMixStatus(image, audio, limiter, mute) {
 		let out
 
-		if (this.savedIcons[id] === undefined) {
-			let img = this.getBaseImage()
+		if (image && image.width && image.height) {
+			let id = `${image.width}x${image.height}MS${audio}_${limiter}_${mute}`
 
-			this.drawFromPNGdata(img, this.AUDIO[audio], 65, 13, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 31, 7, 7, 'left', 'top')
-			this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13, 'left', 'top')
+			if (this.savedIcons[id] === undefined) {
+				let img = new Image(image.width, image.height)
 
-			out = img.toBase64()
+				this.drawFromPNGdata(img, this.AUDIO[audio], 65, 13, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 31, 7, 7, 'left', 'top')
+				this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13, 'left', 'top')
 
-			this.savedIcons[id] = out
-		} else {
-			out = this.savedIcons[id]
+				out = img.toBase64()
+
+				this.savedIcons[id] = out
+			} else {
+				out = this.savedIcons[id]
+			}
 		}
 
 		return out
@@ -333,6 +336,7 @@ class instance_icons {
 	/**
 	 * Returns the output level meters icon.
 	 *
+	 * @param {Object} image - the image raster object
 	 * @param {number} o1 - output 1 icon
 	 * @param {number} o2 - output 2 icon
 	 * @param {number} o3 - output 3 icon
@@ -345,46 +349,32 @@ class instance_icons {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	getOutputLevels(o1, o2, o3, o4, o5, o6, o7, o8) {
-		let id = `O${o1}_${o2}_${o3}_${o4}_${o5}_${o6}_${o7}_${o8}`
+	getOutputLevels(image, o1, o2, o3, o4, o5, o6, o7, o8) {
 		let out
 
-		if (this.savedIcons[id] === undefined) {
-			let img = this.getBaseImage()
+		if (image && image.width && image.height) {
+			let id = `${image.width}x${image.height}O${o1}_${o2}_${o3}_${o4}_${o5}_${o6}_${o7}_${o8}`
 
-			this.drawFromPNGdata(img, this.AUDIO[o1], 13, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o2], 20, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o3], 27, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o4], 34, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o5], 41, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o6], 48, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o7], 55, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[o8], 62, 14, 4, 42, 'left', 'top')
+			if (this.savedIcons[id] === undefined) {
+				let img = new Image(image.width, image.height)
 
-			out = img.toBase64()
+				this.drawFromPNGdata(img, this.AUDIO[o1], 13, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o2], 20, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o3], 27, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o4], 34, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o5], 41, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o6], 48, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o7], 55, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o8], 62, 14, 4, 42, 'left', 'top')
 
-			this.savedIcons[id] = out
-		} else {
-			out = this.savedIcons[id]
+				out = img.toBase64()
+
+				this.savedIcons[id] = out
+			} else {
+				out = this.savedIcons[id]
+			}
 		}
 
 		return out
 	}
-
-	/**
-	 * Set the raster to the current setting
-	 *
-	 * @param {Object} info - the bank configuration
-	 * @access public
-	 * @since 1.1.0
-	 */
-	setRaster(info) {
-		if (info.height !== this.height || info.width !== this.width) {
-			this.height = info.height
-			this.width = info.width
-			this.savedIcons = {}
-		}
-	}
 }
-
-exports = module.exports = instance_icons
