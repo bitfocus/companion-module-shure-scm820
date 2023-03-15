@@ -110,7 +110,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'Channel Mute',
 		description: 'Change color if the selected channel is muted.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
@@ -127,7 +127,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'Channel Gain',
 		description: 'Change color if the channel gain it set to a level.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
@@ -145,7 +145,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'Channel Always On in Mix',
 		description: 'Change color if the channel is set always on in the mix.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
@@ -166,7 +166,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'IntelliMix Mode',
 		description: "Change color if the mixer's IntelliMix mode is selected.",
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
@@ -184,7 +184,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'DFR Assigned Channel',
 		description: 'Change color if the selected channel is assigned to the DFR.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
@@ -201,7 +201,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'DFR Bypassed',
 		description: 'Change color if the selected DFR is set to bypass.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
@@ -218,7 +218,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'DFR Frozen',
 		description: 'Change color if the selected DFR is frozen.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 255),
 		},
@@ -236,7 +236,7 @@ export function updateFeedbacks() {
 		type: 'boolean',
 		name: 'Auto Link Mode Enabled',
 		description: 'Change color if auto link mode is enabled.',
-		style: {
+		defaultStyle: {
 			color: combineRgb(0, 0, 0),
 			bgcolor: combineRgb(255, 255, 0),
 		},
