@@ -136,15 +136,13 @@ export default class Icons {
 	 * @param {number} yStart - y start
 	 * @param {number} width - width
 	 * @param {number} height - height
-	 * @param {String} halign - horizontal alignment
-	 * @param {String} valign - vertical alignment
 	 * @access protected
 	 * @since 1.0.0
 	 */
-	drawFromPNGdata(img, icon, xStart, yStart, width, height, halign, valign) {
+	drawFromPNGdata(img, icon, xStart, yStart, width, height) {
 		if (icon !== undefined) {
 			try {
-				img.drawFromPNGdata(icon, xStart, yStart, width, height, halign, valign)
+				img.drawFromPNGdata(icon, xStart, yStart, width, height)
 			} catch (e) {
 				return
 			}
@@ -184,23 +182,23 @@ export default class Icons {
 				let img = new Image(image.width, image.height)
 
 				if (audioOut !== null) {
-					this.drawFromPNGdata(img, this.AUDIO[audioIn], 59, 13, 4, 42, 'left', 'top')
-					this.drawFromPNGdata(img, this.AUDIO[audioOut], 65, 13, 4, 42, 'left', 'top')
-					this.drawFromPNGdata(img, this.MUTE[mute], 44, 41, 13, 13, 'left', 'top')
+					this.drawFromPNGdata(img, this.AUDIO[audioIn], 59, 13, 4, 42)
+					this.drawFromPNGdata(img, this.AUDIO[audioOut], 65, 13, 4, 42)
+					this.drawFromPNGdata(img, this.MUTE[mute], 44, 41, 13, 13)
 				} else {
-					this.drawFromPNGdata(img, this.AUDIO[audioIn], 65, 13, 4, 42, 'left', 'top')
-					this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13, 'left', 'top')
+					this.drawFromPNGdata(img, this.AUDIO[audioIn], 65, 13, 4, 42)
+					this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13)
 				}
 
 				if (aOn !== null) {
-					this.drawFromPNGdata(img, this.GATE[aOn], 21, 31, 7, 7, 'left', 'top')
+					this.drawFromPNGdata(img, this.GATE[aOn], 21, 31, 7, 7)
 				}
 				if (bOn !== null) {
-					this.drawFromPNGdata(img, this.GATE[bOn], 36, 31, 7, 7, 'left', 'top')
+					this.drawFromPNGdata(img, this.GATE[bOn], 36, 31, 7, 7)
 				}
 
 				if (dfr !== null && dfr > 0) {
-					this.drawFromPNGdata(img, this.DFR[dfr], 4, 41, 37, 13, 'left', 'top')
+					this.drawFromPNGdata(img, this.DFR[dfr], 4, 41, 37, 13)
 				}
 
 				out = img.toBase64()
@@ -239,15 +237,15 @@ export default class Icons {
 			if (this.savedIcons[id] === undefined) {
 				let img = new Image(image.width, image.height)
 
-				this.drawFromPNGdata(img, this.AUDIO[i1], 10, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i2], 17, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i3], 24, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i4], 31, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i5], 38, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i6], 45, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i7], 52, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i8], 59, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[i9], 66, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[i1], 10, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i2], 17, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i3], 24, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i4], 31, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i5], 38, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i6], 45, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i7], 52, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i8], 59, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[i9], 66, 14, 4, 42)
 
 				out = img.toBase64()
 
@@ -281,12 +279,12 @@ export default class Icons {
 		if (this.savedIcons[id] === undefined) {
 			let img = new Image(image.width, image.height)
 
-			this.drawFromPNGdata(img, this.AUDIO[mA], 28, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.AUDIO[mB], 38, 14, 4, 42, 'left', 'top')
-			this.drawFromPNGdata(img, this.LIMITER[limA], 11, 31, 7, 7, 'left', 'top')
-			this.drawFromPNGdata(img, this.LIMITER[limB], 54, 31, 7, 7, 'left', 'top')
-			this.drawFromPNGdata(img, this.MUTE[muteA], 9, 41, 13, 13, 'left', 'top')
-			this.drawFromPNGdata(img, this.MUTE[muteB], 52, 41, 13, 13, 'left', 'top')
+			this.drawFromPNGdata(img, this.AUDIO[mA], 28, 14, 4, 42)
+			this.drawFromPNGdata(img, this.AUDIO[mB], 38, 14, 4, 42)
+			this.drawFromPNGdata(img, this.LIMITER[limA], 11, 31, 7, 7)
+			this.drawFromPNGdata(img, this.LIMITER[limB], 54, 31, 7, 7)
+			this.drawFromPNGdata(img, this.MUTE[muteA], 9, 41, 13, 13)
+			this.drawFromPNGdata(img, this.MUTE[muteB], 52, 41, 13, 13)
 
 			out = img.toBase64()
 
@@ -318,9 +316,9 @@ export default class Icons {
 			if (this.savedIcons[id] === undefined) {
 				let img = new Image(image.width, image.height)
 
-				this.drawFromPNGdata(img, this.AUDIO[audio], 65, 13, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 31, 7, 7, 'left', 'top')
-				this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[audio], 65, 13, 4, 42)
+				this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 31, 7, 7)
+				this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13)
 
 				out = img.toBase64()
 
@@ -358,14 +356,14 @@ export default class Icons {
 			if (this.savedIcons[id] === undefined) {
 				let img = new Image(image.width, image.height)
 
-				this.drawFromPNGdata(img, this.AUDIO[o1], 13, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o2], 20, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o3], 27, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o4], 34, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o5], 41, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o6], 48, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o7], 55, 14, 4, 42, 'left', 'top')
-				this.drawFromPNGdata(img, this.AUDIO[o8], 62, 14, 4, 42, 'left', 'top')
+				this.drawFromPNGdata(img, this.AUDIO[o1], 13, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o2], 20, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o3], 27, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o4], 34, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o5], 41, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o6], 48, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o7], 55, 14, 4, 42)
+				this.drawFromPNGdata(img, this.AUDIO[o8], 62, 14, 4, 42)
 
 				out = img.toBase64()
 

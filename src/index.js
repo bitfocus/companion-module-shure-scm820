@@ -116,7 +116,7 @@ class ShureScm820Instance extends InstanceBase {
 				id: 'port',
 				label: 'Target Port',
 				default: 2202,
-				width: 2,
+				width: 3,
 				min: 1,
 				max: 65534,
 			},
@@ -337,7 +337,7 @@ class ShureScm820Instance extends InstanceBase {
 	 */
 	sendCommand(cmd) {
 		if (cmd !== undefined) {
-			if (this.socket !== undefined && this.socket.connected) {
+			if (this.socket !== undefined && this.socket.isConnected) {
 				this.socket.send(`< ${cmd} >\r\n`)
 			} else {
 				this.log('debug', 'Socket not connected :(')
