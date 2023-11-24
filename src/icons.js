@@ -96,11 +96,11 @@ export default class Icons {
 			),
 		}
 		this.GATE = {
-			ON: Buffer.from(
+			OFF: Buffer.from(
 				'iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAALElEQVQImWN0cXH5z4ADsICI9wnvMaQFFwgyMOHSBQI0kgQ7CGQ5BmBgYAAAaMYFn77EueIAAAAASUVORK5CYII=',
 				'base64'
 			),
-			OFF: Buffer.from(
+			ON: Buffer.from(
 				'iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAALElEQVQImWN0cXH5z4ADsICIe/fuYUgrKSkxMOHSBQI0kgQ7CGQ5BmBgYAAAZ7IFQxStQrMAAAAASUVORK5CYII=',
 				'base64'
 			),
