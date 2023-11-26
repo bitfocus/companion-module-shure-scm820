@@ -99,8 +99,8 @@ export default class Scm820Api {
 
 		audioIn = chIn.audioBitmap
 		audioOut = id == 9 ? null : chOut.audioBitmap
-		aOn = id == 9 ? null : chIn.audioGateA == 'OFF' ? 'ON' : 'OFF'
-		bOn = id == 9 ? null : chIn.audioGateB == 'OFF' ? 'ON' : 'OFF'
+		aOn = id == 9 ? null : chIn.audioGateA// == 'OFF' ? 'ON' : 'OFF'
+		bOn = id == 9 ? null : chIn.audioGateB// == 'OFF' ? 'ON' : 'OFF'
 		mute = chIn.audioMute
 		dfr = id == 9 ? null : this.getDfr(1).assignedChan == id ? 1 : this.getDfr(2).assignedChan == id ? 2 : 0
 
