@@ -71,8 +71,8 @@ export default class Scm820Api {
 				alwaysOnA: 'Unknown', // ALWAYS_ON_ENABLE_A ON|OFF|TOGGLE (GS)
 				alwaysOnB: 'Unknown', // ALWAYS_ON_ENABLE_B ON|OFF|TOGGLE (GS)
 				intellimixMode: 'Unknown', // INTELLIMIX_MODE CLASSIC|SMOOTH|EXTREME|CUSTOM|MANUAL|CUSTOM_PRESET (GS)
-				audioGateA: 'Unknown', // INPUT_AUDIO_GATE_A ON|OFF (G)
-				audioGateB: 'Unknown', // INPUT_AUDIO_GATE_B ON|OFF (G)
+				audioGateA: 'OFF', // INPUT_AUDIO_GATE_A ON|OFF (G)
+				audioGateB: 'OFF', // INPUT_AUDIO_GATE_B ON|OFF (G)
 				limiterEngaged: 'OFF', // LIMITER_ENGAGED ON|OFF (G)
 				audioClip: 'OFF', // AUDIO_IN_CLIP_INDICATOR|AUDIO_OUT_CLIP_INDICATOR ON|OFF (G)
 				audioLevel: 0, // SAMPLE 0-120, -120 dB
@@ -99,8 +99,8 @@ export default class Scm820Api {
 
 		audioIn = chIn.audioBitmap
 		audioOut = id == 9 ? null : chOut.audioBitmap
-		aOn = id == 9 ? null : chIn.audioGateA == 'OFF' ? 'ON' : 'OFF'
-		bOn = id == 9 ? null : chIn.audioGateB == 'OFF' ? 'ON' : 'OFF'
+		aOn = id == 9 ? null : chIn.audioGateA// == 'OFF' ? 'ON' : 'OFF'
+		bOn = id == 9 ? null : chIn.audioGateB// == 'OFF' ? 'ON' : 'OFF'
 		mute = chIn.audioMute
 		dfr = id == 9 ? null : this.getDfr(1).assignedChan == id ? 1 : this.getDfr(2).assignedChan == id ? 2 : 0
 
@@ -285,7 +285,7 @@ export default class Scm820Api {
 	updateChannel(id, key, value) {
 		let channel = this.getChannel(id)
 		let prefix = channel.prefix
-		let variable
+		//let variable
 
 		if (value == 'UNKN' || value == 'UNKNOWN') {
 			value = 'Unknown'
@@ -294,10 +294,9 @@ export default class Scm820Api {
 		if (key.match(/AUDIO_GAIN/)) {
 			channel.audioGain = (parseInt(value) - 1100) / 10
 			channel.audioGain2 =
-				(channel.audioGain == -110 ? '-INF' : (channel.audioGain > 0 ? '+' : '-') + channel.audioGain.toString()) +
-				' dB'
+				(channel.audioGain == -110 ? '-INF' : channel.audioGain.toString()) + ' dB'
 			this.instance.setVariableValues({
-				[`${prefix}audio_gain`]:
+				[`${prefix}_audio_gain`]:
 					this.instance.config.variableFormat == 'units' ? channel.audioGain2 : channel.audioGain,
 			})
 			this.instance.checkFeedbacks(
@@ -310,45 +309,45 @@ export default class Scm820Api {
 			)
 		} else if (key == 'AUDIO_LEVEL') {
 			channel.audioLevel = parseInt(value) - 120
-			variable = channel.audioLevel.toString() + (this.instance.config.variableFormat == 'units' ? ' dB' : '')
+			//variable = channel.audioLevel.toString() + (this.instance.config.variableFormat == 'units' ? ' dB' : '')
 			channel.audioBitmap = this.getLevelBitmap(channel.audioLevel, channel.audioClip)
 			this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status', 'mixer_status')
 		} else if (key == 'AUDIO_MUTE') {
 			channel.audioMute = value
-			this.instance.setVariableValues({ [`${prefix}audio_mute`]: value })
+			this.instance.setVariableValues({ [`${prefix}_audio_mute`]: value })
 			this.instance.checkFeedbacks('channel_status', 'mixer_status', 'audio_mute')
 		} else if (key == 'ALWAYS_ON_ENABLE_A') {
 			channel.alwaysOnA = value
-			this.instance.setVariableValues({ [`${prefix}always_on_enable_a`]: value })
+			this.instance.setVariableValues({ [`${prefix}_always_on_enable_a`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
 		} else if (key == 'ALWAYS_ON_ENABLE_B') {
 			channel.alwaysOnB = value
-			this.instance.setVariableValues({ [`${prefix}always_on_enable_b`]: value })
+			this.instance.setVariableValues({ [`${prefix}_always_on_enable_b`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
 		} else if (key == 'CHAN_NAME') {
 			channel.name = value.replace('{', '').replace('}', '').trim()
-			this.instance.setVariableValues({ [`${prefix}name`]: channel.name })
+			this.instance.setVariableValues({ [`${prefix}_name`]: channel.name })
 			if (this.initDone === true) {
 				this.instance.updateActions()
 				this.instance.updateFeedbacks()
 			}
 		} else if (key == 'INTELLIMIX_MODE') {
 			channel.intellimixMode = value
-			this.instance.setVariableValues({ [`${prefix}intellimix_mode`]: value })
+			this.instance.setVariableValues({ [`${prefix}_intellimix_mode`]: value })
 			this.instance.checkFeedbacks('mixer_status', 'intellimix_mode')
 		} else if (key == 'INPUT_AUDIO_GATE_A') {
 			channel.audioGateA = value
-			this.instance.setVariableValues({ [`${prefix}input_audio_gate_a`]: value })
+			this.instance.setVariableValues({ [`${prefix}_input_audio_gate_a`]: value })
 		} else if (key == 'INPUT_AUDIO_GATE_B') {
 			channel.audioGateB = value
-			this.instance.setVariableValues({ [`${prefix}input_audio_gate_b`]: value })
+			this.instance.setVariableValues({ [`${prefix}_input_audio_gate_b`]: value })
 		} else if (key == 'LIMITER_ENGAGED') {
 			channel.limiterEngaged = value
-			this.instance.setVariableValues({ [`${prefix}limiter_engaged`]: value })
+			this.instance.setVariableValues({ [`${prefix}_limiter_engaged`]: value })
 			this.instance.checkFeedbacks('mixer_levels', 'mixer_status')
 		} else if (key.match(/_CLIP_INDICATOR/)) {
 			channel.audioClip = value
-			this.instance.setVariableValues({ [`${prefix}clip_indicator`]: value })
+			this.instance.setVariableValues({ [`${prefix}_clip_indicator`]: value })
 			this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status', 'mixer_status')
 		}
 	}
