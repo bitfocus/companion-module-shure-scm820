@@ -325,7 +325,6 @@ export default class Scm820Api {
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_b`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
 		} else if (key == 'CHAN_NAME') {
-			//if (value == undefined) { return undefined }
 			channel.name = value.trim()
 			this.instance.setVariableValues({ [`${prefix}_name`]: channel.name })
 			if (this.initDone === true) {
