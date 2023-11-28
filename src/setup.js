@@ -87,7 +87,7 @@ export const Fields = {
 		label: 'Name (31 characters max)',
 		id: 'name',
 		default: '',
-		regex: '/^.{1,31}$/',
+		regex: '/^.{1,31}[^{}]$/',
 	},
 	OnOff: {
 		type: 'dropdown',
