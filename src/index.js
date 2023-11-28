@@ -311,10 +311,6 @@ class ShureScm820Instance extends InstanceBase {
 			let commandArr = command.split(' ')
 			let commandType = commandArr.shift()
 			let commandNum = parseInt(commandArr[0])
-			let channelName = command.split('{')
-			if (channelName[1] != undefined) {
-				channelName = channelName[1].split('}')
-			}
 			if (commandType == 'REP') {
 				if (commandArr[0].match(/DFR1/)) {
 					this.api.updateDfr(1, commandArr[0], commandArr[1])
@@ -323,9 +319,15 @@ class ShureScm820Instance extends InstanceBase {
 				} else if (isNaN(commandNum)) {
 					//this command isn't about a specific channel
 					this.api.updateMixer(commandArr[0], commandArr[1])
-				} else {
+				} else if (commandArr[1] == 'CHAN_NAME') {
+					//this command is about a specific channel name
+					let channelName = command.split('{')
+					channelName = channelName[1] != undefined ? channelName[1].split('}') : undefined
+					if (channelName[0] == undefined) { return undefined }
+					this.api.updateChannel(commandNum, commandArr[1], channelName[0])
+				}else {
 					//this command is about a specific channel
-					this.api.updateChannel(commandNum, commandArr[1], commandArr[2], channelName[0])
+					this.api.updateChannel(commandNum, commandArr[1], commandArr[2])
 				}
 			} else if (commandType == 'SAMPLE') {
 				this.api.parseSample(commandArr)

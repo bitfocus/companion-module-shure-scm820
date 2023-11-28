@@ -279,11 +279,10 @@ export default class Scm820Api {
 	 * @param {number} id - the channel id
 	 * @param {String} key - the command id
 	 * @param {String} value - the new value
-	 * @param {String} name - the new channel name
 	 * @access public
 	 * @since 1.0.0
 	 */
-	updateChannel(id, key, value, name) {
+	updateChannel(id, key, value) {
 		let channel = this.getChannel(id)
 		let prefix = channel.prefix
 		//let variable
@@ -326,8 +325,8 @@ export default class Scm820Api {
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_b`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
 		} else if (key == 'CHAN_NAME') {
-			if (name == undefined) { return undefined }
-			channel.name = name.trim()
+			//if (value == undefined) { return undefined }
+			channel.name = value.trim()
 			this.instance.setVariableValues({ [`${prefix}_name`]: channel.name })
 			if (this.initDone === true) {
 				this.instance.updateActions()
