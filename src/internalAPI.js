@@ -265,12 +265,14 @@ export default class Scm820Api {
 	 */
 	parseSample(data) {
 		if (Array.isArray(data)) {
-			for (let i in data) {
-				this.updateChannel(i + 1, 'AUDIO_LEVEL', data[i])
+			for (let i = 1; i <= 19; i++ ) {
+				//this.updateChannel(i + 1, 'AUDIO_LEVEL', data[i])
+				let channel = this.getChannel(i)
+				channel.audioLevel = data[i - 1] != undefined ? parseInt(data[i - 1], 10) - 120 : channel.audioLevel
+				channel.audioBitmap = this.getLevelBitmap(channel.audioLevel, channel.audioClip)
 			}
 		}
-
-		this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status')
+		this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status', 'mixer_status')
 	}
 
 	/**

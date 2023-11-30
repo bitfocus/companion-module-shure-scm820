@@ -324,7 +324,7 @@ class ShureScm820Instance extends InstanceBase {
 					//this command is about a specific channel name
 					let channelName = command.split('{')
 					channelName = channelName[1] != undefined ? channelName[1].split('}') : undefined
-					if (channelName[0] == undefined) { return undefined }
+					if (channelName[0] === undefined) { return undefined }
 					this.api.updateChannel(commandNum, commandArr[1], channelName[0])
 				}else {
 					//this command is about a specific channel
