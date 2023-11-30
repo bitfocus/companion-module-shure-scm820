@@ -51,7 +51,7 @@ export function updateFeedbacks() {
 					alignment: 'center:top',
 					imageBuffers: [{ buffer: this.api.getMixerLevelsIcon(event.image) }],
 					size: '7',
-					text: 'MIX A B OUT\\n\\nLIM      LIM',
+					text: 'MIX A B OUT\\n\\n LIM                LIM',
 				}
 
 				return out
