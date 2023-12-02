@@ -18,8 +18,8 @@ export function updateFeedbacks() {
 				let out = {
 					alignment: 'center:top',
 					imageBuffers: [{ buffer: this.api.getInputLevelsIcon(event.image) }],
-					size: '7',
-					text: 'IN:123456789',
+					size: '8',
+					text: 'IN: 123456789',
 				}
 
 				return out
@@ -34,8 +34,8 @@ export function updateFeedbacks() {
 				let out = {
 					alignment: 'center:top',
 					imageBuffers: [{ buffer: this.api.getOutputLevelsIcon(event.image) }],
-					size: '7',
-					text: 'OUT:12345678',
+					size: '8',
+					text: 'OUT: 12345678',
 				}
 
 				return out
@@ -50,8 +50,8 @@ export function updateFeedbacks() {
 				let out = {
 					alignment: 'center:top',
 					imageBuffers: [{ buffer: this.api.getMixerLevelsIcon(event.image) }],
-					size: '7',
-					text: 'MIX A B OUT\\n\\n LIM                LIM',
+					size: '8',
+					text: 'MIX  A   B  OUT\\n\\n LIM              LIM',
 				}
 
 				return out
@@ -68,13 +68,13 @@ export function updateFeedbacks() {
 				let out = {
 					alignment: 'left:top',
 					imageBuffers: [{ buffer: this.api.getChannelIcon(parseInt(opt.channel), event.image) }],
-					size: '7',
+					size: '8',
 					text: '',
 				}
 
-				out.text += channel.name + '\\n'
-				out.text += channel.audioGain2 + '\\n'
-				out.text += parseInt(opt.channel) == 9 ? '' : '     A  B\\nON'
+				out.text += '  ' + channel.name + '\\n'
+				out.text += '  ' + channel.audioGain2 + '\\n'
+				out.text += parseInt(opt.channel) == 9 ? '' : '          A     B\\n  ON'
 
 				return out
 			},
@@ -90,14 +90,14 @@ export function updateFeedbacks() {
 				let out = {
 					alignment: 'left:top',
 					imageBuffers: [{ buffer: this.api.getMixerIcon(parseInt(opt.channel), event.image) }],
-					size: '7',
+					size: '8',
 					text: '',
 				}
 
 				out.text += channel.name + '\\n'
 				out.text += (channel.intellimixMode == 'CUSTOM_PRESET' ? 'PRESET' : channel.intellimixMode) + '\\n'
 				out.text += channel.audioGain2 + '\\n'
-				out.text += '       LIM'
+				out.text += '               LIM'
 
 				return out
 			},

@@ -191,10 +191,10 @@ export default class Icons {
 				}
 
 				if (aOn !== null) {
-					this.drawFromPNGdata(img, this.GATE[aOn], 21, 31, 7, 7)
+					this.drawFromPNGdata(img, this.GATE[aOn], 21, 29, 7, 7)
 				}
 				if (bOn !== null) {
-					this.drawFromPNGdata(img, this.GATE[bOn], 36, 31, 7, 7)
+					this.drawFromPNGdata(img, this.GATE[bOn], 38, 29, 7, 7)
 				}
 
 				if (dfr !== null && dfr > 0) {
@@ -317,7 +317,7 @@ export default class Icons {
 				let img = new Image(image.width, image.height)
 
 				this.drawFromPNGdata(img, this.AUDIO[audio], 65, 13, 4, 42)
-				this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 31, 7, 7)
+				this.drawFromPNGdata(img, this.LIMITER[limiter], 51, 29, 7, 7)
 				this.drawFromPNGdata(img, this.MUTE[mute], 49, 41, 13, 13)
 
 				out = img.toBase64()
