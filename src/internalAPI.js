@@ -265,10 +265,14 @@ export default class Scm820Api {
 	 */
 	parseSample(data) {
 		if (Array.isArray(data)) {
-			for (let i = 1; i <= 19; i++ ) {
+			if (data.length != 19) {
+				console.log(`unexpected SAMPLE length response: ${data.length}`)
+				return undefined
+			}
+			for (let i = 1; i <= data.length; i++ ) {
 				//this.updateChannel(i + 1, 'AUDIO_LEVEL', data[i])
 				let channel = this.getChannel(i)
-				channel.audioLevel = data[i - 1] != undefined ? parseInt(data[i - 1], 10) - 120 : channel.audioLevel
+				channel.audioLevel = data[i - 1] === undefined ? channel.audioLevel : isNaN(data[i - 1]) ? channel.audioLevel : parseInt(data[i - 1], 10) - 120
 				channel.audioBitmap = this.getLevelBitmap(channel.audioLevel, channel.audioClip)
 			}
 		}
