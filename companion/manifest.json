@@ -3,7 +3,7 @@
 	"name": "shure-scm820",
 	"shortname": "shure-scm820",
 	"description": "",
-	"version": "2.0.4",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-shure-scm820.git",
 	"bugs": "https://github.com/bitfocus/companion-module-shure-scm820/issues",
