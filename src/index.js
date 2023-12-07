@@ -247,8 +247,8 @@ class ShureScm820Instance extends InstanceBase {
 				cmd += '< GET DFR2_BYPASS >\r\n'
 				cmd += '< GET DFR1_FREEZE >\r\n'
 				cmd += '< GET DFR2_FREEZE >\r\n'
-				cmd += '< GET 0 AUDIO_INPUT_GATE_A >\r\n'
-				cmd += '< GET 0 AUDIO_INPUT_GATE_B >\r\n'
+				cmd += '< GET 0 INPUT_AUDIO_GATE_A >\r\n'
+				cmd += '< GET 0 INPUT_AUDIO_GATE_B >\r\n'
 				cmd += '< GET 0 LIMITER_ENGAGED >\r\n'
 				cmd += '< GET 0 AUDIO_IN_CLIP_INDICATOR >\r\n'
 				cmd += '< GET 0 AUDIO_OUT_CLIP_INDICATOR >\r\n'
@@ -260,7 +260,7 @@ class ShureScm820Instance extends InstanceBase {
 				this.socket.send(cmd)
 
 				this.heartbeatInterval = setInterval(() => {
-					this.socket.send('< GET 1 METER_RATE >')
+					this.socket.send('< GET METER_RATE >')
 				}, 30000)
 
 				this.initDone = true
@@ -308,10 +308,10 @@ class ShureScm820Instance extends InstanceBase {
 	 */
 	processShureCommand(command) {
 		if ((typeof command === 'string' || command instanceof String) && command.length > 0) {
+			//this.log('debug', `command recieved: ${command}`)
 			let commandArr = command.split(' ')
 			let commandType = commandArr.shift()
 			let commandNum = parseInt(commandArr[0])
-
 			if (commandType == 'REP') {
 				if (commandArr[0].match(/DFR1/)) {
 					this.api.updateDfr(1, commandArr[0], commandArr[1])
@@ -320,7 +320,13 @@ class ShureScm820Instance extends InstanceBase {
 				} else if (isNaN(commandNum)) {
 					//this command isn't about a specific channel
 					this.api.updateMixer(commandArr[0], commandArr[1])
-				} else {
+				} else if (commandArr[1] == 'CHAN_NAME') {
+					//this command is about a specific channel name
+					let channelName = command.split('{')
+					channelName = channelName[1] != undefined ? channelName[1].split('}') : undefined
+					if (channelName[0] === undefined) { return undefined }
+					this.api.updateChannel(commandNum, commandArr[1], channelName[0])
+				}else {
 					//this command is about a specific channel
 					this.api.updateChannel(commandNum, commandArr[1], commandArr[2])
 				}

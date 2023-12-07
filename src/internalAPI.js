@@ -265,12 +265,18 @@ export default class Scm820Api {
 	 */
 	parseSample(data) {
 		if (Array.isArray(data)) {
-			for (let i in data) {
-				this.updateChannel(i + 1, 'AUDIO_LEVEL', data[i])
+			if (data.length != 19) {
+				console.log(`unexpected SAMPLE length response: ${data.length}`)
+				return undefined
+			}
+			for (let i = 1; i <= data.length; i++ ) {
+				//this.updateChannel(i + 1, 'AUDIO_LEVEL', data[i])
+				let channel = this.getChannel(i)
+				channel.audioLevel = data[i - 1] === undefined ? channel.audioLevel : isNaN(data[i - 1]) ? channel.audioLevel : parseInt(data[i - 1], 10) - 120
+				channel.audioBitmap = this.getLevelBitmap(channel.audioLevel, channel.audioClip)
 			}
 		}
-
-		this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status')
+		this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status', 'mixer_status')
 	}
 
 	/**
@@ -325,7 +331,7 @@ export default class Scm820Api {
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_b`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
 		} else if (key == 'CHAN_NAME') {
-			channel.name = value.replace('{', '').replace('}', '').trim()
+			channel.name = value.trim()
 			this.instance.setVariableValues({ [`${prefix}_name`]: channel.name })
 			if (this.initDone === true) {
 				this.instance.updateActions()
