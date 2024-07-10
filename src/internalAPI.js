@@ -313,6 +313,7 @@ export default class Scm820Api {
 				'mixer_status',
 				'audio_gain'
 			)
+			this.instance.recordScmAction('audio_gain', {channel: id, gain: channel.audioGain}, `audio_gain ${id}`)
 		} else if (key == 'AUDIO_LEVEL') {
 			channel.audioLevel = parseInt(value) - 120
 			//variable = channel.audioLevel.toString() + (this.instance.config.variableFormat == 'units' ? ' dB' : '')
@@ -322,14 +323,17 @@ export default class Scm820Api {
 			channel.audioMute = value
 			this.instance.setVariableValues({ [`${prefix}_audio_mute`]: value })
 			this.instance.checkFeedbacks('channel_status', 'mixer_status', 'audio_mute')
+			this.instance.recordScmAction('audio_mute', {channel: id, choice: channel.audioMute}, `audio_mute ${id}`)
 		} else if (key == 'ALWAYS_ON_ENABLE_A') {
 			channel.alwaysOnA = value
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_a`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
+			this.instance.recordScmAction('always_on_enable', {channel: id, mix: 'A', choice: channel.alwaysOnA}, `always_on_enable A ${id}`)
 		} else if (key == 'ALWAYS_ON_ENABLE_B') {
 			channel.alwaysOnB = value
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_b`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
+			this.instance.recordScmAction('always_on_enable', {channel: id, mix: 'B', choice: channel.alwaysOnB}, `always_on_enable B ${id}`)
 		} else if (key == 'CHAN_NAME') {
 			channel.name = value.trim()
 			this.instance.setVariableValues({ [`${prefix}_name`]: channel.name })
@@ -337,10 +341,14 @@ export default class Scm820Api {
 				this.instance.updateActions()
 				this.instance.updateFeedbacks()
 			}
+			if (id < 10 || id > 17) { // Don't record name changes for direct outs
+				this.instance.recordScmAction('chan_name', {channel: id, name: channel.name}, `chan_name ${id}`)
+			}
 		} else if (key == 'INTELLIMIX_MODE') {
 			channel.intellimixMode = value
 			this.instance.setVariableValues({ [`${prefix}_intellimix_mode`]: value })
 			this.instance.checkFeedbacks('mixer_status', 'intellimix_mode')
+			this.instance.recordScmAction('intellimix_mode', {channel: id, choice: channel.intellimixMode}, `intellimix_mode ${id}`)
 		} else if (key == 'INPUT_AUDIO_GATE_A') {
 			channel.audioGateA = value
 			this.instance.setVariableValues({ [`${prefix}_input_audio_gate_a`]: value })
@@ -379,14 +387,17 @@ export default class Scm820Api {
 			dfr.assignedChan = parseInt(value)
 			this.instance.setVariableValues({ [`${prefix}assigned_chan`]: dfr.assignedChan })
 			this.instance.checkFeedbacks('dfr_assigned_chan')
+			this.instance.recordScmAction('dfr_assigned_chan', {dfr: id, channel: dfr.assignedChan}, `dfr_assigned_chan ${id}`)
 		} else if (key.match(/_BYPASS/)) {
 			dfr.bypass = value
 			this.instance.setVariableValues({ [`${prefix}bypass`]: dfr.bypass })
 			this.instance.checkFeedbacks('dfr_bypass')
+			this.instance.recordScmAction('dfr_bypass', {dfr: id, choice: dfr.bypass}, `dfr_bypass ${id}`)
 		} else if (key.match(/_FREEZE/)) {
 			dfr.freeze = value
 			this.instance.setVariableValues({ [`${prefix}freeze`]: dfr.freeze })
 			this.instance.checkFeedbacks('dfr_freeze')
+			this.instance.recordScmAction('dfr_freeze', {dfr: id, choice: dfr.freeze}, `dfr_freeze ${id}`)
 		}
 	}
 

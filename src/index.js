@@ -442,6 +442,38 @@ class ShureScm820Instance extends InstanceBase {
 			return out
 		}
 	}
+
+	/**
+	 * Inform module of Action Recorder state change
+	 * 
+	 * @access public
+	 * @since 2.2.0
+	 * @param {boolean} isRecording - the state of the action recorder
+	 */
+
+	handleStartStopRecordActions(isRecording) {
+		this.isRecordingActions = isRecording
+	}
+	/**
+	 * Record Action if Action Recorder is engaged
+	 * 
+	 * @since 2.2.0
+	 * @param {string} action - actionId
+	 * @param {object} actionOptions - action options
+	 * @param {string} uid - unique id for recorded action
+	 */
+	recordScmAction (action, actionOptions, uid) {
+		if (this.isRecordingActions) {
+			this.recordAction(
+				{
+					actionId: action,
+					options: actionOptions,
+
+				},
+				uid
+			)
+		}
+	}
 }
 
 runEntrypoint(ShureScm820Instance, [CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap)])
