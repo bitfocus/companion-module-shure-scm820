@@ -43,8 +43,7 @@ class ShureScm820Instance extends InstanceBase {
 	async configUpdated(config) {
 		let resetConnection = false
 		let cmd
-
-		if (this.config.host != config.host) {
+		if (this.config.host != config.bonjour_host?.split(':')[0] || config.host) {
 			resetConnection = true
 		}
 
@@ -59,7 +58,8 @@ class ShureScm820Instance extends InstanceBase {
 		}
 
 		this.config = config
-
+		this.config.host = config.bonjour_host?.split(':')[0] || config.host
+		this.config.port = config.bonjour_host ? 2202 : config.port //bonjour returns port 80
 		this.updateActions()
 		this.updateFeedbacks()
 		this.updateVariables()
@@ -105,11 +105,19 @@ class ShureScm820Instance extends InstanceBase {
 	getConfigFields() {
 		return [
 			{
+				type: 'bonjour-device',
+				id: 'bonjour_host',
+				label: 'Bonjour Host',
+				width: 8,
+				regex: Regex.HOSTNAME,
+			},
+			{
 				type: 'textinput',
 				id: 'host',
 				label: 'Target IP',
 				width: 6,
 				regex: Regex.IP,
+				isVisible: (options) => !options.bonjour_host,
 			},
 			{
 				type: 'number',
@@ -119,6 +127,7 @@ class ShureScm820Instance extends InstanceBase {
 				width: 3,
 				min: 1,
 				max: 65534,
+				isVisible: (options) => !options.bonjour_host,
 			},
 			{
 				type: 'checkbox',
@@ -163,6 +172,8 @@ class ShureScm820Instance extends InstanceBase {
 	 */
 	async init(config) {
 		this.config = config
+		this.config.host = config.bonjour_host?.split(':')[0] || config.host
+		this.config.port = config.bonjour_host ? 2202 : config.port //bonjour returns port 80
 		this.initDone = false
 
 		this.heartbeatInterval = null
@@ -324,9 +335,11 @@ class ShureScm820Instance extends InstanceBase {
 					//this command is about a specific channel name
 					let channelName = command.split('{')
 					channelName = channelName[1] != undefined ? channelName[1].split('}') : undefined
-					if (channelName[0] === undefined) { return undefined }
+					if (channelName[0] === undefined) {
+						return undefined
+					}
 					this.api.updateChannel(commandNum, commandArr[1], channelName[0])
-				}else {
+				} else {
 					//this command is about a specific channel
 					this.api.updateChannel(commandNum, commandArr[1], commandArr[2])
 				}
@@ -445,7 +458,7 @@ class ShureScm820Instance extends InstanceBase {
 
 	/**
 	 * Inform module of Action Recorder state change
-	 * 
+	 *
 	 * @access public
 	 * @since 2.2.0
 	 * @param {boolean} isRecording - the state of the action recorder
@@ -456,19 +469,18 @@ class ShureScm820Instance extends InstanceBase {
 	}
 	/**
 	 * Record Action if Action Recorder is engaged
-	 * 
+	 *
 	 * @since 2.2.0
 	 * @param {string} action - actionId
 	 * @param {object} actionOptions - action options
 	 * @param {string} uid - unique id for recorded action
 	 */
-	recordScmAction (action, actionOptions, uid) {
+	recordScmAction(action, actionOptions, uid) {
 		if (this.isRecordingActions) {
 			this.recordAction(
 				{
 					actionId: action,
 					options: actionOptions,
-
 				},
 				uid
 			)

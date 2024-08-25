@@ -99,8 +99,8 @@ export default class Scm820Api {
 
 		audioIn = chIn.audioBitmap
 		audioOut = id == 9 ? null : chOut.audioBitmap
-		aOn = id == 9 ? null : chIn.audioGateA// == 'OFF' ? 'ON' : 'OFF'
-		bOn = id == 9 ? null : chIn.audioGateB// == 'OFF' ? 'ON' : 'OFF'
+		aOn = id == 9 ? null : chIn.audioGateA // == 'OFF' ? 'ON' : 'OFF'
+		bOn = id == 9 ? null : chIn.audioGateB // == 'OFF' ? 'ON' : 'OFF'
 		mute = chIn.audioMute
 		dfr = id == 9 ? null : this.getDfr(1).assignedChan == id ? 1 : this.getDfr(2).assignedChan == id ? 2 : 0
 
@@ -269,10 +269,15 @@ export default class Scm820Api {
 				console.log(`unexpected SAMPLE length response: ${data.length}`)
 				return undefined
 			}
-			for (let i = 1; i <= data.length; i++ ) {
+			for (let i = 1; i <= data.length; i++) {
 				//this.updateChannel(i + 1, 'AUDIO_LEVEL', data[i])
 				let channel = this.getChannel(i)
-				channel.audioLevel = data[i - 1] === undefined ? channel.audioLevel : isNaN(data[i - 1]) ? channel.audioLevel : parseInt(data[i - 1], 10) - 120
+				channel.audioLevel =
+					data[i - 1] === undefined
+						? channel.audioLevel
+						: isNaN(data[i - 1])
+						? channel.audioLevel
+						: parseInt(data[i - 1], 10) - 120
 				channel.audioBitmap = this.getLevelBitmap(channel.audioLevel, channel.audioClip)
 			}
 		}
@@ -299,8 +304,7 @@ export default class Scm820Api {
 
 		if (key.match(/AUDIO_GAIN/)) {
 			channel.audioGain = (parseInt(value) - 1100) / 10
-			channel.audioGain2 =
-				(channel.audioGain == -110 ? '-INF' : channel.audioGain.toString()) + ' dB'
+			channel.audioGain2 = (channel.audioGain == -110 ? '-INF' : channel.audioGain.toString()) + ' dB'
 			this.instance.setVariableValues({
 				[`${prefix}_audio_gain`]:
 					this.instance.config.variableFormat == 'units' ? channel.audioGain2 : channel.audioGain,
@@ -313,7 +317,7 @@ export default class Scm820Api {
 				'mixer_status',
 				'audio_gain'
 			)
-			this.instance.recordScmAction('audio_gain', {channel: id, gain: channel.audioGain}, `audio_gain ${id}`)
+			this.instance.recordScmAction('audio_gain', { channel: id, gain: channel.audioGain }, `audio_gain ${id}`)
 		} else if (key == 'AUDIO_LEVEL') {
 			channel.audioLevel = parseInt(value) - 120
 			//variable = channel.audioLevel.toString() + (this.instance.config.variableFormat == 'units' ? ' dB' : '')
@@ -323,17 +327,25 @@ export default class Scm820Api {
 			channel.audioMute = value
 			this.instance.setVariableValues({ [`${prefix}_audio_mute`]: value })
 			this.instance.checkFeedbacks('channel_status', 'mixer_status', 'audio_mute')
-			this.instance.recordScmAction('audio_mute', {channel: id, choice: channel.audioMute}, `audio_mute ${id}`)
+			this.instance.recordScmAction('audio_mute', { channel: id, choice: channel.audioMute }, `audio_mute ${id}`)
 		} else if (key == 'ALWAYS_ON_ENABLE_A') {
 			channel.alwaysOnA = value
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_a`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
-			this.instance.recordScmAction('always_on_enable', {channel: id, mix: 'A', choice: channel.alwaysOnA}, `always_on_enable A ${id}`)
+			this.instance.recordScmAction(
+				'always_on_enable',
+				{ channel: id, mix: 'A', choice: channel.alwaysOnA },
+				`always_on_enable A ${id}`
+			)
 		} else if (key == 'ALWAYS_ON_ENABLE_B') {
 			channel.alwaysOnB = value
 			this.instance.setVariableValues({ [`${prefix}_always_on_enable_b`]: value })
 			this.instance.checkFeedbacks('always_on_enable')
-			this.instance.recordScmAction('always_on_enable', {channel: id, mix: 'B', choice: channel.alwaysOnB}, `always_on_enable B ${id}`)
+			this.instance.recordScmAction(
+				'always_on_enable',
+				{ channel: id, mix: 'B', choice: channel.alwaysOnB },
+				`always_on_enable B ${id}`
+			)
 		} else if (key == 'CHAN_NAME') {
 			channel.name = value.trim()
 			this.instance.setVariableValues({ [`${prefix}_name`]: channel.name })
@@ -341,14 +353,19 @@ export default class Scm820Api {
 				this.instance.updateActions()
 				this.instance.updateFeedbacks()
 			}
-			if (id < 10 || id > 17) { // Don't record name changes for direct outs
-				this.instance.recordScmAction('chan_name', {channel: id, name: channel.name}, `chan_name ${id}`)
+			if (id < 10 || id > 17) {
+				// Don't record name changes for direct outs
+				this.instance.recordScmAction('chan_name', { channel: id, name: channel.name }, `chan_name ${id}`)
 			}
 		} else if (key == 'INTELLIMIX_MODE') {
 			channel.intellimixMode = value
 			this.instance.setVariableValues({ [`${prefix}_intellimix_mode`]: value })
 			this.instance.checkFeedbacks('mixer_status', 'intellimix_mode')
-			this.instance.recordScmAction('intellimix_mode', {channel: id, choice: channel.intellimixMode}, `intellimix_mode ${id}`)
+			this.instance.recordScmAction(
+				'intellimix_mode',
+				{ channel: id, choice: channel.intellimixMode },
+				`intellimix_mode ${id}`
+			)
 		} else if (key == 'INPUT_AUDIO_GATE_A') {
 			channel.audioGateA = value
 			this.instance.setVariableValues({ [`${prefix}_input_audio_gate_a`]: value })
@@ -387,17 +404,21 @@ export default class Scm820Api {
 			dfr.assignedChan = parseInt(value)
 			this.instance.setVariableValues({ [`${prefix}assigned_chan`]: dfr.assignedChan })
 			this.instance.checkFeedbacks('dfr_assigned_chan')
-			this.instance.recordScmAction('dfr_assigned_chan', {dfr: id, channel: dfr.assignedChan}, `dfr_assigned_chan ${id}`)
+			this.instance.recordScmAction(
+				'dfr_assigned_chan',
+				{ dfr: id, channel: dfr.assignedChan },
+				`dfr_assigned_chan ${id}`
+			)
 		} else if (key.match(/_BYPASS/)) {
 			dfr.bypass = value
 			this.instance.setVariableValues({ [`${prefix}bypass`]: dfr.bypass })
 			this.instance.checkFeedbacks('dfr_bypass')
-			this.instance.recordScmAction('dfr_bypass', {dfr: id, choice: dfr.bypass}, `dfr_bypass ${id}`)
+			this.instance.recordScmAction('dfr_bypass', { dfr: id, choice: dfr.bypass }, `dfr_bypass ${id}`)
 		} else if (key.match(/_FREEZE/)) {
 			dfr.freeze = value
 			this.instance.setVariableValues({ [`${prefix}freeze`]: dfr.freeze })
 			this.instance.checkFeedbacks('dfr_freeze')
-			this.instance.recordScmAction('dfr_freeze', {dfr: id, choice: dfr.freeze}, `dfr_freeze ${id}`)
+			this.instance.recordScmAction('dfr_freeze', { dfr: id, choice: dfr.freeze }, `dfr_freeze ${id}`)
 		}
 	}
 
