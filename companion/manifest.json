@@ -3,7 +3,7 @@
 	"name": "shure-scm820",
 	"shortname": "shure-scm820",
 	"description": "",
-	"version": "2.1.1",
+	"version": "0.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-shure-scm820.git",
 	"bugs": "https://github.com/bitfocus/companion-module-shure-scm820/issues",
@@ -18,7 +18,7 @@
 		"type": "node18",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "..\\src\\index.js"
+		"entrypoint": "../src/index.js"
 	},
 	"manufacturer": "Shure",
 	"products": ["SCM820"],

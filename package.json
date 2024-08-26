@@ -1,6 +1,6 @@
 {
 	"name": "shure-scm820",
-	"version": "2.1.1",
+	"version": "2.2.0",
 	"main": "src/index.js",
 	"type": "module",
 	"scripts": {
@@ -17,8 +17,8 @@
 		"pngjs": "~7.0.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "~1.5.1",
-		"prettier": "^2.8.8"
+		"@companion-module/tools": "~2.0.0",
+		"prettier": "^3.0.0"
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json"
 }
