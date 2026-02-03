@@ -345,6 +345,8 @@ class ShureScm820Instance extends InstanceBase {
 				}
 			} else if (commandType == 'SAMPLE') {
 				this.api.parseSample(commandArr)
+			} else {
+				this.log('info', `Unhandled command type: ${command}`)
 			}
 		}
 	}
