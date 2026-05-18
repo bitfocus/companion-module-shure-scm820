@@ -266,7 +266,7 @@ export default class Scm820Api {
 	parseSample(data) {
 		if (Array.isArray(data)) {
 			if (data.length != 19) {
-				console.log(`unexpected SAMPLE length response: ${data.length}`)
+				this.log('error', `unexpected SAMPLE length response: ${data.length}`)
 				return undefined
 			}
 			for (let i = 1; i <= data.length; i++) {
