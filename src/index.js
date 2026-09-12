@@ -319,7 +319,7 @@ class ShureScm820Instance extends InstanceBase {
 	 */
 	processShureCommand(command) {
 		if ((typeof command === 'string' || command instanceof String) && command.length > 0) {
-			//this.log('debug', `command recieved: ${command}`)
+			//this.log('debug', `command received: ${command}`)
 			let commandArr = command.split(' ')
 			let commandType = commandArr.shift()
 			let commandNum = parseInt(commandArr[0])
@@ -345,6 +345,8 @@ class ShureScm820Instance extends InstanceBase {
 				}
 			} else if (commandType == 'SAMPLE') {
 				this.api.parseSample(commandArr)
+			} else {
+				this.log('info', `Unhandled command type: ${command}`)
 			}
 		}
 	}
