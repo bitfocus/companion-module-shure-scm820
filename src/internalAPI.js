@@ -266,7 +266,7 @@ export default class Scm820Api {
 	parseSample(data) {
 		if (Array.isArray(data)) {
 			if (data.length != 19) {
-				console.log(`unexpected SAMPLE length response: ${data.length}`)
+				this.log('error', `unexpected SAMPLE length response: ${data.length}`)
 				return undefined
 			}
 			for (let i = 1; i <= data.length; i++) {
@@ -380,6 +380,8 @@ export default class Scm820Api {
 			channel.audioClip = value
 			this.instance.setVariableValues({ [`${prefix}_clip_indicator`]: value })
 			this.instance.checkFeedbacks('input_levels', 'output_levels', 'mixer_levels', 'channel_status', 'mixer_status')
+		} else {
+			this.log('info', `Unhandled channel command: ${key}`)
 		}
 	}
 
@@ -419,6 +421,8 @@ export default class Scm820Api {
 			this.instance.setVariableValues({ [`${prefix}freeze`]: dfr.freeze })
 			this.instance.checkFeedbacks('dfr_freeze')
 			this.instance.recordScmAction('dfr_freeze', { dfr: id, choice: dfr.freeze }, `dfr_freeze ${id}`)
+		} else {
+			this.log('info', `Unhandled dfr command: ${key}`)
 		}
 	}
 
@@ -447,6 +451,8 @@ export default class Scm820Api {
 			this.instance.setVariableValues({
 				meter_rate: this.mixer.meterRate.toString() + (this.instance.config.variableFormat == 'units' ? ' ms' : ''),
 			})
+		} else {
+			this.log('info', `Unhandled mixer command: ${key}`)
 		}
 	}
 }
